@@ -1,11 +1,12 @@
 import pygame 
 import math
-import numpy as np
 from time import sleep
+from numpy import dot
 
 from dimensions import *
 from constants import *
 from utils import *
+from utils import _ro_ij, _p_ij_tilda
 
 from sensor import Ultrasonic
 
@@ -72,6 +73,16 @@ class Robot:
         print(self.heading)
         if self.heading > 2*math.pi or self.heading< -2*math.pi:
             self.heading = 0
+
+    def get_velocity(self, v_star):
+        tot_x = 0
+        tot_y = 0
+        for neigh in self.other_robots:
+            result = dot(_ro_ij(self.position, neigh.position, self.K, dist=self.distances[neigh.id]),
+                         _p_ij_tilda(self.position, neigh.position))
+            tot_x += result[0]
+            tot_y += result[1]
+        v_i = v_star[0] - tot_x, v_star[1] - tot_y
 
     def update(self, dt):
         self.sensors_rays, collision = self.sensor.sense_obstacles(self.x, self.y, self.heading)

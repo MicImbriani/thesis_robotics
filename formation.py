@@ -16,6 +16,7 @@ class Formation:
             case "triangle":    self.formation = self._triangle_formation()
             case "line":        self.formation = self._line_formation()
         self.assign_trajs()
+        self.assign_dists()
     
     def _triangle_formation(self):
         start = [(200, 100), (250, 100), (225, 150)]
@@ -28,10 +29,25 @@ class Formation:
         return [[x, y] for x, y in zip(start, end)]
 
     def assign_trajs(self):
+        id = 0
         for robot, formation_coords in zip(self.swarm, self.formation):
-            print(formation_coords)
-            import time
-            # time.sleep(1)
             traj = Trajectory(formation_coords)
             robot.trajectory = traj  # [(start),(end)]
             robot.x, robot.y = traj.start
+            robot.id = id
+            id += 1
+    
+    # def get_goal_distances(self):
+    #     start = [x[0] for x in self.formation]
+    #     return {(0,1): (abs(start[0][0]-start[1][0]), abs(start[0][1]-start[1][1])),
+    #             (0,2): (abs(start[0][0]-start[2][0]), abs(start[0][1]-start[2][1])),
+    #             (1,2): (abs(start[2][0]-start[1][0]), abs(start[2][1]-start[1][1]))}
+
+    def assign_dists(self):
+        starts = [x[0] for x in self.formation]
+        for robot in self.swarm:
+            for id, entry in enumerate(starts):
+                if id == robot.id:
+                    continue
+                else:
+                    robot.dists = {id: (abs(robot.x-entry[0]), abs(robot.y-entry[1]))}

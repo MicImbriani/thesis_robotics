@@ -20,6 +20,9 @@ robot1 = Robot(map)
 robot2 = Robot(map)
 robot3 = Robot(map)
 swarm = [robot1,robot2, robot3]
+for robot in swarm:
+    robot.other_robots = [x for x in swarm if x is not robot]
+    print(robot.other_robots)
 
 # TRAJECTORY/ FORMATION
 formation = Formation("line", swarm)

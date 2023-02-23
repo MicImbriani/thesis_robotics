@@ -1,17 +1,36 @@
-import numpy as np
 import pygame
 from constants import *
+from numpy.linalg import norm
+from numpy import array
 
 def distance(point1, point2):
-    point1 = np.array(point1)
-    point2 = np.array(point2)
-    # print(point1, point2)
-    return np.linalg.norm(point1-point2)
+    point1 = array(point1)
+    point2 = array(point2)
+    return norm(point1-point2)
 
 def ray_distance(point1, point2, dist):
     res = distance(point1, point2)
-    # print("res", res)
     return 0 if res >= dist else res
+
+
+# relative_displacement
+def _p_ij_tilda(robot1, robot2):
+    return robot1[0]-robot2[0], robot1[1]-robot2[1]
+
+def _beta_ij(robot1, robot2):
+    return norm(robot2[0]-robot1[0])**2, norm(robot2[1]-robot1[1])**2
+    # TODO: POTENTIAL ISSUE
+    # THE NORM OF A NUMBER IS THE NUMBER ITSELF (IF <0, ABS)
+    # TODO: LOOK INTO IF THIS SHOULD BE DIFFERENT
+
+# partial derivative of gamma_ij (differentiable potential function with 1 minim)
+# with respect to beta_ij ()
+def _ro_ij(robot1, robot2, K, distance):
+    beta_x, beta_y = _beta_ij(robot1, robot2)
+    x = K * (beta_x**2 - distance**4) / beta_x**2
+    y = K * (beta_y**2 - distance**4) / beta_y**2
+    return x, y
+
 
 # COLORS
 def get_color(color):
