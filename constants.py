@@ -7,4 +7,3 @@ DOWN_LEFT =     {"coord":(-1,1), "name": ("DOWN_LEFT")}
 LEFT =          {"coord":(-1,0), "name": ("LEFT")}
 UP_LEFT =       {"coord":(-1,-1), "name": ("UP_LEFT")}
 
-

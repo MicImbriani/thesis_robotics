@@ -1,11 +1,17 @@
+from utils import connect2
+from scipy.spatial import distance
 class Trajectory:
     def __init__(self, coords):
         self.start = coords[0]
         self.end = coords[1]
+        
 
     @property
     def coord(self):
         return (self.start, self.end)
+    
+    def _set_traj_coords(self):
+        points = connect2(self.start, self.end)
 
 
 
@@ -46,8 +52,11 @@ class Formation:
     def assign_dists(self):
         starts = [x[0] for x in self.formation]
         for robot in self.swarm:
+            robot.distances = {}
             for id, entry in enumerate(starts):
                 if id == robot.id:
                     continue
                 else:
-                    robot.dists = {id: (abs(robot.x-entry[0]), abs(robot.y-entry[1]))}
+                    dist = distance.euclidean(robot.position, entry)
+                    # robot.distances[id] = (abs(robot.x-entry[0]), abs(robot.y-entry[1]))
+                    robot.distances[id] = (abs(dist))

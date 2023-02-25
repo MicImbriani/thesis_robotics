@@ -1,7 +1,7 @@
 import pygame 
 import math
 from time import sleep
-from numpy import dot
+from numpy import dot, cross
 
 from dimensions import *
 from constants import *
@@ -15,6 +15,7 @@ class Robot:
         # robot dims 
         self.w = robot_width
         self._m2p = 3779.52 #meters -> pixels
+        self.flag = False
 
         # start positions
         if startpos:
@@ -30,6 +31,7 @@ class Robot:
         self.speedR = 0.01 * self._m2p
         self.maxspeed = 0.02 * self._m2p
         self.minspeed = 0.01 * self._m2p
+        self.K = 0.4
 
         # SENSORS
         self.sensor = Ultrasonic(sensor_range, game_map)
@@ -45,7 +47,12 @@ class Robot:
         return get_direction(self.heading)
 
     def avoid_obstacles(self, collision, dt):
-        l_speed, r_speed = self.compute_wheel_vel(self.sensors_rays, collision)
+        if self.flag == False:
+            l_speed, r_speed = self.compute_wheel_vel(self.sensors_rays, collision)
+        else:
+            l_speed, r_speed = self.get_velocity()
+            print("L_SPEED", l_speed)
+            print("R_SPEED", r_speed)
         self.speedR = l_speed
         self.speedL = r_speed
 
@@ -70,21 +77,36 @@ class Robot:
         self.x += ((self.speedL + self.speedR)/2) * math.cos(self.heading) * dt
         self.y -= ((self.speedL + self.speedR)/2) * math.sin(self.heading) * dt
         self.heading += (self.speedR - self.speedL) / self.w * dt
-        print(self.heading)
+        # print(self.heading)
         if self.heading > 2*math.pi or self.heading< -2*math.pi:
             self.heading = 0
 
-    def get_velocity(self, v_star):
+    def get_velocity(self):
+        v_star = self.minspeed, self.minspeed, self.minspeed
         tot_x = 0
         tot_y = 0
+        tot_z = 0
         for neigh in self.other_robots:
-            result = dot(_ro_ij(self.position, neigh.position, self.K, dist=self.distances[neigh.id]),
+            result = cross(_ro_ij(self.position, neigh.position, self.K, self.distances[neigh.id]),
                          _p_ij_tilda(self.position, neigh.position))
-            tot_x += result[0]
-            tot_y += result[1]
-        v_i = v_star[0] - tot_x, v_star[1] - tot_y
+            print("RESULT", result)
+            res_x, res_y, res_z = result
+            tot_x += res_x 
+            tot_y += res_y
+            tot_z += res_z
+        v_i = v_star[0] - tot_x, v_star[1] - tot_y, v_star[2] - tot_z
+        print(v_i)
+        return v_i[0], v_i[2]
+
+
+    def get_vy_star(self):
+        # get Vx (current X coord of robot)
+        # compute Vy (ideal y coord of robot if it were following trajectory)
+        vx = self.x 
+        # vy_star = self.
 
     def update(self, dt):
         self.sensors_rays, collision = self.sensor.sense_obstacles(self.x, self.y, self.heading)
         self.avoid_obstacles(collision, dt)
         self.kinematics(dt)
+        self.get_velocity()

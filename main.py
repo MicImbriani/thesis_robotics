@@ -19,7 +19,8 @@ map = pygame.display.set_mode(MAP_SIZE)
 robot1 = Robot(map)
 robot2 = Robot(map)
 robot3 = Robot(map)
-swarm = [robot1,robot2, robot3]
+robot3.flag = True
+swarm = [robot1,robot3]
 for robot in swarm:
     robot.other_robots = [x for x in swarm if x is not robot]
     print(robot.other_robots)
