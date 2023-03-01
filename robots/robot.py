@@ -39,6 +39,9 @@ class Robot:
         # Obstalce logic
         self.min_obstalce_distance = sensor_dist
 
+        # SWARM
+
+
     @property
     def position(self):
         return (self.x, self.y)
@@ -84,7 +87,19 @@ class Robot:
         if self.heading > 2*math.pi or self.heading< -2*math.pi:
             self.heading = 0
 
+    def store_distances(self):
+        for neigh in self.other_robots:
+            print("ROBOT", self.id)
+            print("NEIGH", neigh.id)
+            print("DIST", compute_distance(self.position, neigh.position))
+            print(self.distances_log)
+            print(self.distances_log[neigh.id])
+            self.distances_log[neigh.id].append(compute_distance(self.position, neigh.position))
+            print(self.distances_log[neigh.id])
+            print("______")
+
     def update(self, dt):
         self.sensors_rays, collision = self.sensor.sense_obstacles(self.x, self.y, self.heading)
         self.compute_wheel_vel(collision)
         self.kinematics(dt)
+        self.store_distances()

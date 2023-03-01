@@ -1,5 +1,6 @@
 from utils.utils import connect2
-from scipy.spatial import distance
+from scipy.spatial.distance import euclidean
+
 class Trajectory:
     def __init__(self, coords):
         self.start = coords[0]
@@ -59,10 +60,12 @@ class Formation:
         starts = [x[0] for x in self.formation]
         for robot in self.swarm:
             robot.distances = {}
+            robot.distances_log = {}
             for id, entry in enumerate(starts):
                 if id == robot.id:
                     continue
                 else:
-                    dist = distance.euclidean(robot.position, entry)
+                    dist = euclidean(robot.position, entry)
                     # robot.distances[id] = (abs(robot.x-entry[0]), abs(robot.y-entry[1]))
                     robot.distances[id] = (abs(dist))
+                    robot.distances_log[id] = []

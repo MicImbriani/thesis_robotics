@@ -42,6 +42,13 @@ def get_color(color):
 
 
 
+# GAME STATE
+def on_end(swarm):
+    for robot in swarm:
+        print("ROBOT ID: ", robot.id)
+        print("LOG", robot.distances_log)
+        print()
+
 def check_stop_game():
     running = True
     for event in pygame.event.get():
@@ -92,7 +99,9 @@ def get_direction(heading):
         raise Exception("NO DIRECTION FOUND FROM HEADING")
 
 
-
+from scipy.spatial.distance import euclidean
+def compute_distance(r1, r2):
+    return euclidean(r1, r2)
 
 
 # COMPUTING COORDS ALONG TWO POINTS

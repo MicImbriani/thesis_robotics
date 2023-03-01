@@ -2,7 +2,7 @@ import pygame
 from time import sleep
 
 from utils.dimensions import *
-from utils.utils import check_stop_game, update_swarm
+from utils.utils import check_stop_game, update_swarm, on_end
 
 from robots.robot import Robot
 from robots.robot_distance import DistanceRobot
@@ -20,7 +20,7 @@ map = pygame.display.set_mode(MAP_SIZE)
 robot1 = DistanceRobot(map)
 robot2 = Robot(map)
 robot3 = DistanceRobot(map)
-robot4 = DistanceRobot(map)
+# robot4 = DistanceRobot(map)
 swarm = [robot1,robot2, robot3]
 for robot in swarm:
     robot.other_robots = [x for x in swarm if x is not robot]
@@ -41,6 +41,9 @@ running = True
 while running:
     # Check for exit
     running = check_stop_game()
+    if not running:
+        on_end(swarm)
+        break
 
     # Update clock
     dt = (pygame.time.get_ticks() - last_time)/1000
