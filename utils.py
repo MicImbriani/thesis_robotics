@@ -18,30 +18,16 @@ def _p_ij_tilda(robot1, robot2):
     return robot1[0]-robot2[0], robot1[1]-robot2[1]
 
 def _beta_ij(robot1, robot2):
-    print("ROBOT 1", robot1)
-    print("ROBOT 2", robot2)
-    print()
-    print(norm(robot2[0]-robot1[0])**2)
-    print(norm(robot2[1]-robot1[1])**2)
-    return norm(robot2[0]-robot1[0])**2, norm(robot2[1]-robot1[1])**2   
-    # TODO: POTENTIAL ISSUE
-    # THE NORM OF A NUMBER IS THE NUMBER ITSELF (IF <0, ABS)
-    # TODO: LOOK INTO IF THIS SHOULD BE DIFFERENT
+    p_ij = _p_ij_tilda(robot1, robot2)
+    return norm(p_ij)**2
 
 # partial derivative of gamma_ij (differentiable potential function with 1 minim)
 # with respect to beta_ij ()
-def _ro_ij(robot1, robot2, K, distancex):
-    beta_x, beta_y = _beta_ij(robot1, robot2)
-    beta_x += 0.0001
-    beta_y += 0.0001
-    print("BETA X",beta_x, "BETA Y", beta_y)
-    distance = list(distancex)
-    print("DIST", distance)
-    distance[0] += 1
-    distance[1] += 1
-    x = K * (beta_x**2 - distance[0]**4) / beta_x**2
-    y = K * (beta_y**2 - distance[1]**4) / beta_y**2
-    return x, y, 0
+def _ro_ij(robot1, robot2, K, distance):
+    beta = _beta_ij(robot1, robot2)
+    beta += 2.2250738585072014e-308
+    ro = K * (beta**2 - distance**4) / beta**2
+    return ro
 
 
 # COLORS
@@ -67,6 +53,8 @@ def check_stop_game():
     return running
 
 
+
+# ROBOTS
 
 def update_swarm(swarm, dt):
     [robot.update(dt) for robot in swarm]
@@ -102,6 +90,8 @@ def get_direction(heading):
         return DOWN_RIGHT
     else:
         raise Exception("NO DIRECTION FOUND FROM HEADING")
+
+
 
 
 

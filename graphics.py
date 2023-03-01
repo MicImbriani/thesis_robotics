@@ -32,7 +32,9 @@ class Graphics:
         rect = rotated.get_rect(center=robot.position)
         self.map.blit(rotated, rect)    
 
-    def update_senors_data(self, robot):
+    def update_senors(self, robot):
+        if robot.name == "DistanceRobot":
+            return
         for ray in robot.sensors_rays:
             if ray == [sys.maxsize, sys.maxsize]:
                 continue
@@ -52,6 +54,6 @@ class Graphics:
         for robot in self.swarm:
             self.draw_trajectory(robot)
             self.update_robot(robot)
-            self.update_senors_data(robot)
+            self.update_senors(robot)
             self.draw_robot_path(robot)
             robot.path.append(robot.position)

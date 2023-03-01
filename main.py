@@ -4,7 +4,8 @@ from time import sleep
 from dimensions import *
 from utils import check_stop_game, update_swarm
 
-from robot import Robot
+from robots.robot import Robot
+from robots.robot_distance import DistanceRobot
 from graphics import Graphics
 from sensor import Ultrasonic
 from formation import Formation
@@ -16,20 +17,20 @@ from formation import Formation
 map = pygame.display.set_mode(MAP_SIZE)
 
 # ROBOTS
-robot1 = Robot(map)
+robot1 = DistanceRobot(map)
 robot2 = Robot(map)
-robot3 = Robot(map)
-robot3.flag = True
-swarm = [robot1,robot3]
+robot3 = DistanceRobot(map)
+robot4 = DistanceRobot(map)
+swarm = [robot1,robot2, robot3]
 for robot in swarm:
     robot.other_robots = [x for x in swarm if x is not robot]
     print(robot.other_robots)
 
 # TRAJECTORY/ FORMATION
-formation = Formation("line", swarm)
+formation = Formation("triangle", swarm)
 
 # GRAPHICS
-gfx = Graphics(swarm, map, MAP_SIZE, './sprites/robot.png', './sprites/MAP.png')
+gfx = Graphics(swarm, map, MAP_SIZE, './sprites/robot.png', './sprites/MAP_empty.png')
 
 
 dt = 0

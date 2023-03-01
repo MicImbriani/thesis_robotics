@@ -21,6 +21,7 @@ class Formation:
         match name:
             case "triangle":    self.formation = self._triangle_formation()
             case "line":        self.formation = self._line_formation()
+            case "square":        self.formation = self._square_formation()
         self.assign_trajs()
         self.assign_dists()
     
@@ -31,6 +32,11 @@ class Formation:
 
     def _line_formation(self):
         start = [(200, 100), (200, 130), (200, 160)]
+        end = list(map(lambda coords: (coords[0]+500, coords[1]), start))
+        return [[x, y] for x, y in zip(start, end)]
+    
+    def _square_formation(self):
+        start = [(200, 100), (200, 130), (230, 130), (230,100)]
         end = list(map(lambda coords: (coords[0]+500, coords[1]), start))
         return [[x, y] for x, y in zip(start, end)]
 
