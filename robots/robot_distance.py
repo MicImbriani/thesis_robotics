@@ -1,9 +1,9 @@
-from dimensions import *
-from constants import *
-from utils import ray_distance, _ro_ij, _p_ij_tilda
+from utils.dimensions import *
+from utils.constants import *
+from utils.utils import ray_distance, _ro_ij, _p_ij_tilda
 from pygame import Vector2
 import pygame
-from utils import get_color
+from utils.utils import get_color
 from time import sleep
 
 from .robot import Robot

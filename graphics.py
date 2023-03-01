@@ -3,8 +3,8 @@ import math
 import sys
 import numpy as np
 
-from dimensions import *
-from utils import *
+from utils.dimensions import *
+from utils.utils import *
 
 
 class Graphics:

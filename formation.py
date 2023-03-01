@@ -1,4 +1,4 @@
-from utils import connect2
+from utils.utils import connect2
 from scipy.spatial import distance
 class Trajectory:
     def __init__(self, coords):

@@ -1,8 +1,8 @@
 import pygame
 from time import sleep
 
-from dimensions import *
-from utils import check_stop_game, update_swarm
+from utils.dimensions import *
+from utils.utils import check_stop_game, update_swarm
 
 from robots.robot import Robot
 from robots.robot_distance import DistanceRobot

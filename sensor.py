@@ -2,8 +2,8 @@ import pygame
 import math
 import sys 
 import numpy as np
-from utils import *
-from dimensions import *
+from utils.utils import *
+from utils.dimensions import *
 
 class Ultrasonic:
     def __init__(self, sensor_range, map):

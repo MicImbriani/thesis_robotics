@@ -1,5 +1,5 @@
 import pygame
-from constants import *
+from utils.constants import *
 from numpy.linalg import norm
 from numpy import array
 

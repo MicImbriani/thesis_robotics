@@ -3,10 +3,10 @@ import math
 from time import sleep
 from numpy import dot, cross
 
-from dimensions import *
-from constants import *
-from utils import *
-from utils import _ro_ij, _p_ij_tilda
+from utils.dimensions import *
+from utils.constants import *
+from utils.utils import *
+from utils.utils import _ro_ij, _p_ij_tilda
 
 from sensor import Ultrasonic
 
