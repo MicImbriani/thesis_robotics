@@ -29,14 +29,9 @@ class DistanceRobot(Robot):
                         self.K, self.distances[neigh.id])
             pij = _p_ij_tilda(self.position, neigh.position)
             result = [n*ro for n in pij]
-            # result = cross(_ro_ij(self.position, neigh.position, self.K, self.distances[neigh.id]),
-            #              _p_ij_tilda(self.position, neigh.position))
-            # print("RESULT", result)
             res_x, res_y = result
             tot_x += res_x
             tot_y += res_y
-        # sleep(10)
-        print("TOTALLLLL", tot_x, tot_y)
         return tot_x, tot_y
 
 
