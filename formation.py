@@ -23,6 +23,7 @@ class Formation:
             case "triangle":    self.formation = self._triangle_formation()
             case "line":        self.formation = self._line_formation()
             case "square":        self.formation = self._square_formation()
+        self.dists = {}
         self.assign_trajs()
         self.assign_dists()
     
@@ -50,11 +51,11 @@ class Formation:
             robot.id = id
             id += 1
     
-    # def get_goal_distances(self):
-    #     start = [x[0] for x in self.formation]
-    #     return {(0,1): (abs(start[0][0]-start[1][0]), abs(start[0][1]-start[1][1])),
-    #             (0,2): (abs(start[0][0]-start[2][0]), abs(start[0][1]-start[2][1])),
-    #             (1,2): (abs(start[2][0]-start[1][0]), abs(start[2][1]-start[1][1]))}
+    def get_goal_distances(self):
+        start = [x[0] for x in self.formation]
+        return {(0,1): (abs(start[0][0]-start[1][0]), abs(start[0][1]-start[1][1])),
+                (0,2): (abs(start[0][0]-start[2][0]), abs(start[0][1]-start[2][1])),
+                (1,2): (abs(start[2][0]-start[1][0]), abs(start[2][1]-start[1][1]))}
 
     def assign_dists(self):
         starts = [x[0] for x in self.formation]
@@ -66,6 +67,6 @@ class Formation:
                     continue
                 else:
                     dist = euclidean(robot.position, entry)
-                    # robot.distances[id] = (abs(robot.x-entry[0]), abs(robot.y-entry[1]))
+                    self.dists[(robot.id, id)] = dist
                     robot.distances[id] = (abs(dist))
                     robot.distances_log[id] = []

@@ -89,14 +89,7 @@ class Robot:
 
     def store_distances(self):
         for neigh in self.other_robots:
-            print("ROBOT", self.id)
-            print("NEIGH", neigh.id)
-            print("DIST", compute_distance(self.position, neigh.position))
-            print(self.distances_log)
-            print(self.distances_log[neigh.id])
             self.distances_log[neigh.id].append(compute_distance(self.position, neigh.position))
-            print(self.distances_log[neigh.id])
-            print("______")
 
     def update(self, dt):
         self.sensors_rays, collision = self.sensor.sense_obstacles(self.x, self.y, self.heading)

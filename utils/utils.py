@@ -43,11 +43,11 @@ def get_color(color):
 
 
 # GAME STATE
-def on_end(swarm):
+def get_distances_log(swarm):
+    final = {}
     for robot in swarm:
-        print("ROBOT ID: ", robot.id)
-        print("LOG", robot.distances_log)
-        print()
+        final[robot.id] = robot.distances_log
+    return final
 
 def check_stop_game():
     running = True

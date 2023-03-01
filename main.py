@@ -1,8 +1,9 @@
 import pygame
 from time import sleep
+import matplotlib.pyplot as plt
 
 from utils.dimensions import *
-from utils.utils import check_stop_game, update_swarm, on_end
+from utils.utils import check_stop_game, update_swarm, get_distances_log
 
 from robots.robot import Robot
 from robots.robot_distance import DistanceRobot
@@ -42,7 +43,6 @@ while running:
     # Check for exit
     running = check_stop_game()
     if not running:
-        on_end(swarm)
         break
 
     # Update clock
@@ -59,3 +59,17 @@ while running:
 
     gfx.update()
     pygame.display.update()
+
+distances = formation.dists
+distances_log = get_distances_log(swarm)
+r01 = distances_log[0][1]
+r02 = distances_log[0][2]
+r12 = distances_log[1][2]
+length = len(r01)
+fig = plt.figure()
+ax = fig.add_subplot(1,1,1)
+ax.plot(range(length), [val-distances[(0,1)] for val in r01], color='tab:blue')
+ax.plot(range(length), [val-distances[(0,2)] for val in r02], color='tab:green')
+ax.plot(range(length), [val-distances[(1,2)] for val in r12], color='tab:red')
+
+plt.savefig("lol.png")
