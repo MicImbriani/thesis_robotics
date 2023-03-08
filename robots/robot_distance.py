@@ -1,10 +1,11 @@
 from utils.dimensions import *
 from utils.constants import *
-from utils.utils import ray_distance, _ro_ij, _p_ij_tilda
+from utils.utils import _ro_ij, _p_ij_tilda
 from pygame import Vector2
-import pygame
 from utils.utils import get_color
 from time import sleep
+from numpy.matlib import cross
+from math import sin, cos
 
 from .robot import Robot
 
@@ -43,9 +44,17 @@ class DistanceRobot(Robot):
         tot_x, tot_y = self.get_velocity()
         # linear velocity of the robot
         # average velocity of the robot based on the speeds of left and right wheels
+        Mx = [[sin(self.heading) + cos(self.heading), sin(self.heading) - cos(self.heading)],
+              [sin(self.heading) - cos(self.heading), sin(self.heading) + cos(self.heading)]]
+        print("MX", Mx)
+        result = cross(Mx, [tot_x,tot_y]) 
         v = (self.speedL + self.speedR) / 2
-        self.x += (v * math.cos(self.heading) - tot_x) * dt
-        self.y += (v * math.sin(self.heading) - tot_y) * dt
+        vx = (v * math.cos(self.heading) - result[0]) * dt 
+        vy = (v * math.sin(self.heading) - result[1]) * dt
+        print([vx, vy])
+        # print("RESULT:",result)
+        self.x += vx 
+        self.y -= vy
 
         # angular velocity of the robot
         L = self.w  # distance between the wheels (aka wheelbase)
