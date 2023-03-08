@@ -42,24 +42,6 @@ def get_color(color):
 
 
 
-# GAME STATE
-def get_distances_log(swarm):
-    final = {}
-    for robot in swarm:
-        final[robot.id] = robot.distances_log
-    return final
-
-def check_stop_game():
-    running = True
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                running = False
-    return running
-
-
 
 
 def get_direction(heading):
@@ -133,3 +115,8 @@ def connect_nd(ends):
 
 ends = np.array([[0, 0],
                  [0,-10]])
+
+
+
+
+

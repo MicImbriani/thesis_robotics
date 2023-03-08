@@ -1,0 +1,63 @@
+IN_RANGE = 0
+TOO_FAR = 1
+TOO_CLOSE = -1
+
+def get_spacing_from_dist(dists: dict):
+    def is_in_range(dist):
+        if 3 <= dist <= 7:
+            return IN_RANGE
+        elif dist < 3: 
+            return TOO_CLOSE
+        else:
+            return TOO_FAR
+
+    # Substitute every value of distances with IN_RANGE, TOO_FAR or TOO_CLOSE
+    for robot, other_robots in dists.items():
+        for k,v in other_robots.items():
+            dists[robot][k] = is_in_range(v)
+    return dists
+
+
+import matplotlib as plt
+def make_plots(formation, robots) -> None:
+    """ Plots the distances between robots over time.
+    """
+    distances = formation.dists
+    distances_log = get_distances_log(robots)
+    r01 = distances_log[0][1]
+    r02 = distances_log[0][2]
+    r12 = distances_log[1][2]
+    length = len(r01)
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    ax.plot(range(length), [val-distances[(0, 1)]
+            for val in r01], color='tab:blue')
+    ax.plot(range(length), [val-distances[(0, 2)]
+            for val in r02], color='tab:green')
+    ax.plot(range(length), [val-distances[(1, 2)]
+            for val in r12], color='tab:red')
+
+    plt.savefig("lol.png")
+
+
+
+
+
+
+# GAME STATE
+def get_distances_log(swarm):
+    final = {}
+    for robot in swarm:
+        final[robot.id] = robot.distances_log
+    return final
+
+import pygame
+def check_stop_game():
+    running = True
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                running = False
+    return running
