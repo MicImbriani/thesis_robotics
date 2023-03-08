@@ -61,11 +61,6 @@ def check_stop_game():
 
 
 
-# ROBOTS
-
-def update_swarm(swarm, dt):
-    [robot.update(dt) for robot in swarm]
-
 
 def get_direction(heading):
     if ((heading == 0)      # RIGHT

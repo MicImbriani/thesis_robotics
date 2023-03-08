@@ -44,7 +44,7 @@ class Formation:
 
     def assign_trajs(self):
         id = 0
-        for robot, formation_coords in zip(self.swarm, self.formation):
+        for robot, formation_coords in zip(self.swarm.robots, self.formation):
             traj = Trajectory(formation_coords)
             robot.trajectory = traj  # [(start),(end)]
             robot.x, robot.y = traj.start
@@ -59,7 +59,7 @@ class Formation:
 
     def assign_dists(self):
         starts = [x[0] for x in self.formation]
-        for robot in self.swarm:
+        for robot in self.swarm.robots:
             robot.distances = {}
             robot.distances_log = {}
             for id, entry in enumerate(starts):
