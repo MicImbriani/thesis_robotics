@@ -3,7 +3,7 @@ from time import sleep
 import matplotlib.pyplot as plt
 
 from utils.dimensions import *
-from utils.utils import check_stop_game, get_distances_log
+from utils.simulation_utils import check_stop_game, make_plots
 
 from robots.robot import Robot
 from robots.robot_distance import DistanceRobot
@@ -26,7 +26,7 @@ class Simulation:
         self.swarm = Swarm([self.robot1, self.robot2, self.robot3])
 
         # TRAJECTORY/ FORMATION
-        self.formation = Formation("triangle", self.swarm)
+        self.formation = Formation("triangle", self.swarm.robots, self.swarm.ids)
 
         # GRAPHICS
         self.gfx = Graphics(self.swarm.robots, self.map, MAP_SIZE, './sprites/robot.png', './sprites/MAP_empty.png')
@@ -54,18 +54,4 @@ class Simulation:
             self.gfx.update()
             pygame.display.update()
 
-
-    def make_plots(self):
-        distances = self.formation.dists
-        distances_log = get_distances_log(self.swarm.robots)
-        r01 = distances_log[0][1]
-        r02 = distances_log[0][2]
-        r12 = distances_log[1][2]
-        length = len(r01)
-        fig = plt.figure()
-        ax = fig.add_subplot(1,1,1)
-        ax.plot(range(length), [val-distances[(0,1)] for val in r01], color='tab:blue')
-        ax.plot(range(length), [val-distances[(0,2)] for val in r02], color='tab:green')
-        ax.plot(range(length), [val-distances[(1,2)] for val in r12], color='tab:red')
-
-        plt.savefig("lol.png")
+        make_plots(self.formation, self.swarm.robots)
