@@ -1,3 +1,5 @@
+from utils.qlearn_utils import get_spacing_from_dist
+
 from simulation import Simulation
 
 class QLearn(Simulation):
@@ -6,7 +8,8 @@ class QLearn(Simulation):
 
 
     def get_state(self):
-        dists = self.formation.get_distances()
+        dists = get_spacing_from_dist(self.formation.get_distances())
+        # ADD MORE STUFF TO STATE
 
     def get_random_actions(self):
         return

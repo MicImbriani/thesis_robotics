@@ -7,6 +7,7 @@ from utils.simulation_utils import check_stop_game, make_plots
 
 from robots.robot import Robot
 from robots.robot_distance import DistanceRobot
+from robots.robot_learn import LearnRobot
 from robots.swarm import Swarm
 from graphics import Graphics
 from formation import Formation
@@ -21,7 +22,7 @@ class Simulation:
         # ROBOTS
         self.robot1 = DistanceRobot(self.map)
         self.robot2 = Robot(self.map)
-        self.robot3 = DistanceRobot(self.map)
+        self.robot3 = LearnRobot(self.map)
         # robot4 = DistanceRobot(self.map)
         self.swarm = Swarm([self.robot1, self.robot2, self.robot3])
 
@@ -54,4 +55,4 @@ class Simulation:
             self.gfx.update()
             pygame.display.update()
 
-        make_plots(self.formation, self.swarm.robots)
+        # make_plots(self.formation, self.swarm.robots)

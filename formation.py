@@ -47,13 +47,10 @@ class Formation:
     def assign_trajs(self):
         """ Assigns desired trajectory to each robot, respectively.
         """
-        id = 0
         for robot, formation_coords in zip(self.robots, self.formation):
             traj = Trajectory(formation_coords)
             robot.trajectory = traj  # [(start),(end)]
             robot.x, robot.y = traj.start
-            robot.id = id
-            id += 1
     
     # def get_goal_distances(self):
     #     start = [x[0] for x in self.formation]

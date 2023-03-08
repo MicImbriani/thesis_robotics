@@ -33,7 +33,7 @@ class Graphics:
         self.map.blit(rotated, rect)    
 
     def update_senors(self, robot):
-        if robot.name == "DistanceRobot":
+        if robot.name == "DistanceRobot" or robot.name == "LearnRobot":
             return
         for ray in robot.sensors_rays:
             if ray == [sys.maxsize, sys.maxsize]:

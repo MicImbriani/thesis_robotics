@@ -1,5 +1,4 @@
 import pygame
-from utils.constants import *
 from numpy.linalg import norm
 from numpy import array
 
@@ -43,8 +42,9 @@ def get_color(color):
 
 
 
+from utils.constants import *
 
-def get_direction(heading):
+def get_direction_from_heading(heading) -> dict:
     if ((heading == 0)      # RIGHT
         or (0 < heading <= 0.39269908169872414) \
         or (5.890486225480862 < heading <= 6.283185307179586) \
@@ -74,6 +74,21 @@ def get_direction(heading):
         return DOWN_RIGHT
     else:
         raise Exception("NO DIRECTION FOUND FROM HEADING")
+
+
+def get_direction_from_dir(dir):
+    match dir:
+        case (0,0): return STRAIGHT
+        case (0, -1): return UP
+        case (1,-1): return UP_RIGHT
+        case (1,0): return RIGHT
+        case (1,1): return DOWN_RIGHT
+        case (0,1): return DOWN
+        case (-1,1): return DOWN_LEFT
+        case (-1,0): return LEFT
+        case (-1,-1): return UP_LEFT
+
+
 
 
 from scipy.spatial.distance import euclidean
