@@ -1,5 +1,6 @@
 from utils.utils import connect2
 from scipy.spatial.distance import euclidean
+from copy import copy
 
 class Trajectory:
     def __init__(self, coords):
@@ -17,8 +18,9 @@ class Trajectory:
 
 
 class Formation:
-    def __init__(self, name, swarm):
-        self.swarm = swarm
+    def __init__(self, name, robots, ids):
+        self.robots = robots
+        self.ids = ids
         match name:
             case "triangle":    self.formation = self._triangle_formation()
             case "line":        self.formation = self._line_formation()
@@ -43,23 +45,28 @@ class Formation:
         return [[x, y] for x, y in zip(start, end)]
 
     def assign_trajs(self):
+        """ Assigns desired trajectory to each robot, respectively.
+        """
         id = 0
-        for robot, formation_coords in zip(self.swarm.robots, self.formation):
+        for robot, formation_coords in zip(self.robots, self.formation):
             traj = Trajectory(formation_coords)
             robot.trajectory = traj  # [(start),(end)]
             robot.x, robot.y = traj.start
             robot.id = id
             id += 1
     
-    def get_goal_distances(self):
-        start = [x[0] for x in self.formation]
-        return {(0,1): (abs(start[0][0]-start[1][0]), abs(start[0][1]-start[1][1])),
-                (0,2): (abs(start[0][0]-start[2][0]), abs(start[0][1]-start[2][1])),
-                (1,2): (abs(start[2][0]-start[1][0]), abs(start[2][1]-start[1][1]))}
+    # def get_goal_distances(self):
+    #     start = [x[0] for x in self.formation]
+    #     return {(0,1): (abs(start[0][0]-start[1][0]), abs(start[0][1]-start[1][1])),
+    #             (0,2): (abs(start[0][0]-start[2][0]), abs(start[0][1]-start[2][1])),
+    #             (1,2): (abs(start[2][0]-start[1][0]), abs(start[2][1]-start[1][1]))}
 
     def assign_dists(self):
+        """ For each robot in the swarm, assigns the desired distance to mantain 
+        with respects to every other robot in the swarm.
+        """
         starts = [x[0] for x in self.formation]
-        for robot in self.swarm.robots:
+        for robot in self.robots:
             robot.distances = {}
             robot.distances_log = {}
             for id, entry in enumerate(starts):
@@ -70,3 +77,12 @@ class Formation:
                     self.dists[(robot.id, id)] = dist
                     robot.distances[id] = (abs(dist))
                     robot.distances_log[id] = []
+
+    def get_distances(self) -> dict:
+        """ Gets current distances between robots.
+        """
+        dists = {}
+        for robot in self.robots:
+            new_ids = copy(self.ids).remove(robot.id)
+            dists[robot.id] = dict.fromkeys(new_ids, [robot.distances_log[id][-1] for id in new_ids])
+        return dists

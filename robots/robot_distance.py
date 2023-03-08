@@ -21,7 +21,7 @@ class DistanceRobot(Robot):
         self.x2 = self.x
         self.y2 = self.y
 
-    def get_velocity(self):
+    def get_velocity(self) -> tuple[float,float]:
         tot_x = 0
         tot_y = 0
         for neigh in self.other_robots:
