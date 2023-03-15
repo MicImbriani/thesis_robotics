@@ -8,10 +8,11 @@ from utils.utils import *
 
 
 class Graphics:
-    def __init__(self, swarm, map, dimensions, robot_img_path, map_img_path):
+    def __init__(self, swarm, map, dimensions, robot_img_path, map_img_path, final_coord):
         pygame.init()
         self.swarm = swarm
         self.robot_path = []
+        self.final_coord = final_coord
 
         # MAP
         # load imgs
@@ -49,6 +50,9 @@ class Graphics:
 
     def draw_trajectory(self,robot):
         pygame.draw.line(self.map, get_color("green"), robot.trajectory.start, robot.trajectory.end)
+        # end position of robot formation
+        pygame.draw.circle(self.map, get_color("red"), self.final_coord, 3, 1)
+
 
     def update(self):
         for robot in self.swarm:

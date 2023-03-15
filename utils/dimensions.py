@@ -10,3 +10,7 @@ robot_width = 0.01
 n_rays = 5
 sensor_dist = 150
 sensor_range = (sensor_dist, math.radians(50))
+
+
+# FORMATION 
+final_coordinate = (100,100)

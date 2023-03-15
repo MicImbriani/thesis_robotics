@@ -25,6 +25,7 @@ class Formation:
             case "triangle":    self.formation = self._triangle_formation()
             case "line":        self.formation = self._line_formation()
             case "square":        self.formation = self._square_formation()
+        self.end_middle_coordinate = self.compute_end_point()
         self.dists = {}
         self.assign_trajs()
         self.assign_dists()
@@ -83,3 +84,10 @@ class Formation:
             new_ids = copy(self.ids).remove(robot.id)
             dists[robot.id] = dict.fromkeys(new_ids, [robot.distances_log[id][-1] for id in new_ids])
         return dists
+
+    def compute_end_point(self):
+        # [[(200, 100), (700, 100)], [(250, 100), (750, 100)], [(225, 150), (725, 150)]]
+        all_ends = [start_and_end[1] for start_and_end in self.formation]
+        ends_x = [end[0] for end in all_ends]
+        ends_y = [end[1] for end in all_ends]
+        return (sum(ends_x)/len(ends_x), sum(ends_y)/len(ends_y))

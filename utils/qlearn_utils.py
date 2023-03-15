@@ -17,3 +17,15 @@ def get_spacing_from_dist(dists: dict) -> dict:
             dists[robot][k] = is_in_range(v)
     return dists
 
+
+from utils.utils import distance
+from utils.dimensions import final_coordinate
+def _dist_to_goal(robot_position):
+    return distance(robot_position, final_coordinate)
+
+
+# checks if the robot is traveling in the right direction
+def in_correct_direction(robot_path):
+    if len(robot_path) <= 1:
+        return False
+    return True if _dist_to_goal(robot_path[-1] < robot_path[-2]) else False

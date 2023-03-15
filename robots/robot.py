@@ -46,10 +46,6 @@ class Robot:
     def position(self):
         return (self.x, self.y)
 
-    @property
-    def current_direction(self):
-        return get_direction(self.heading)
-
     def compute_wheel_vel(self, collision):
         l_speed, r_speed = self.avoid_obstacles(self.sensors_rays, collision)
         self.speedR = l_speed
@@ -86,7 +82,7 @@ class Robot:
         self.heading += (self.speedR - self.speedL) / self.w * dt
         if self.heading > 2*math.pi or self.heading< -2*math.pi:
             self.heading = 0
-        if self.id == 1: print("IDEAL HEADING ------->", self.heading)
+        if self.id == 1 and print_flag: print("IDEAL HEADING ------->", self.heading)
 
     def store_distances(self):
         for neigh in self.other_robots:

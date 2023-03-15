@@ -1,6 +1,6 @@
 from utils.dimensions import *
 from utils.constants import *
-from utils.utils import ray_distance, _ro_ij, _p_ij_tilda
+from utils.utils import ray_distance, _ro_ij, _p_ij_tilda, print_flag
 from pygame import Vector2
 import pygame
 from utils.utils import get_color
@@ -27,7 +27,7 @@ class DistanceRobot(Robot):
 
         # self.speedR = self.minspeed - x_tot
         # self.speedL = self.minspeed - y_tot
-        print("SPEEEED", self.speedL, self.speedR)
+        if print_flag: print("SPEEEED", self.speedL, self.speedR)
 
     def get_velocity(self) -> tuple[float,float]:
         tot_x = 0
@@ -56,7 +56,7 @@ class DistanceRobot(Robot):
         self.y -= ((self.speedL + self.speedR) / 2 * math.sin(self.heading) + tot_y) * dt
 
         # angular velocity of the robot
-        print((self.speedR - self.speedL) / self.w * dt)
+        if print_flag: print((self.speedR - self.speedL) / self.w * dt)
         self.heading += (self.speedR - self.speedL) / self.w * dt
         if self.heading > 2*math.pi or self.heading < -2*math.pi:
             self.heading = 0

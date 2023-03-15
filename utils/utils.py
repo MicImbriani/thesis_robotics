@@ -78,7 +78,7 @@ def get_direction_from_heading(heading) -> dict:
 
 def get_direction_from_dir(dir):
     match dir:
-        case (0,0): return STRAIGHT
+        case (0,0): return STOP
         case (0, -1): return UP
         case (1,-1): return UP_RIGHT
         case (1,0): return RIGHT
@@ -87,6 +87,28 @@ def get_direction_from_dir(dir):
         case (-1,1): return DOWN_LEFT
         case (-1,0): return LEFT
         case (-1,-1): return UP_LEFT
+
+relative_directions = [UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT]
+def get_relative_directions(current_dir, new_dir):
+    idx = relative_directions.index(current_dir)
+    if new_dir == LEFT:
+        return relative_directions[idx-2]
+    else:
+        id_right = idx + 2 if idx+2 <= len(relative_directions) else idx+2-len(relative_directions)
+        return relative_directions[id_right]
+
+
+def get_heading_from_direction(dir):
+    match dir['name']:
+        case 'STOP':          return 0
+        case 'UP':            return 1.57
+        case 'UP_RIGHT':      return 0.785
+        case 'RIGHT':         return 0
+        case 'DOWN_RIGHT':    return 5.495
+        case 'DOWN':          return 4.71
+        case 'DOWN_LEFT':     return 3.925
+        case 'LEFT':          return 3.14
+        case 'UP_LEFT':       return 2.355
 
 
 
