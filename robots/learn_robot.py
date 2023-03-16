@@ -13,8 +13,9 @@ class LearnRobot(Robot):
     def __init__(self, game_map, startpos=None):
         super().__init__(game_map, startpos)
         self.name = "LearnRobot"
-        self.timer_step = 0.3
+        self.timer_step = 1
         self.timer = get_seconds() + self.timer_step
+        self.history = [self.position]
 
     @property
     def current_direction(self):
@@ -53,21 +54,13 @@ class LearnRobot(Robot):
             
             # HARDCODED HEADING CHANGE
             self.heading = get_heading_from_direction(new_dir)
-            
-            self.timer = get_seconds() + self.timer_step
-            print()
-            print(in_correct_direction(self.path))
 
-        # print("TIMER", self.timer)
-        # if int(get_seconds()) == self.timer:
-        #     new_dir = choice([STRAIGHT, RIGHT, LEFT])
-        #     if new_dir == STRAIGHT:
-        #         self.heading = 0
-        #     elif new_dir == RIGHT:
-        #         self.heading = 3.14
-        #     elif new_dir == LEFT:
-        #         self.heading = 5
-        #     self.timer = int(get_seconds()) + 1
+            # Add current position to the history of robot's positions
+            self.history.append(self.position)
+            # Check if it's going in right direction
+            print(in_correct_direction(self.path, self.end_mid_point))
+
+            self.timer = get_seconds() + self.timer_step
 
 
         v = (self.speedL + self.speedR) / 2
