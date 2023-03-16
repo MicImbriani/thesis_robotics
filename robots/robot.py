@@ -46,8 +46,8 @@ class Robot:
     def position(self):
         return (self.x, self.y)
 
-    def compute_wheel_vel(self, collision):
-        l_speed, r_speed = self.avoid_obstacles(self.sensors_rays, collision)
+    def compute_wheel_vel(self, sensors_rays, collisions):
+        l_speed, r_speed = self.avoid_obstacles(sensors_rays, collisions)
         self.speedR = l_speed
         self.speedL = r_speed
 
@@ -88,8 +88,12 @@ class Robot:
         for neigh in self.other_robots:
             self.distances_log[neigh.id].append(compute_distance(self.position, neigh.position))
 
+    def _sense_obstacles(self):
+        self.sensors_rays, self.collisions = self.sensor.sense_obstacles(self.x, self.y, self.heading)
+        return self.sensors_rays, self.collisions
+
     def update(self, dt):
-        self.sensors_rays, collision = self.sensor.sense_obstacles(self.x, self.y, self.heading)
-        self.compute_wheel_vel(collision)
+        sensor_rays, collisions = self._sense_obstacles()
+        self.compute_wheel_vel(sensor_rays, collisions)
         self.kinematics(dt)
         self.store_distances()

@@ -3,6 +3,10 @@ TOO_FAR = 1
 TOO_CLOSE = -1
 
 def get_spacing_from_dist(dists: dict) -> dict:
+    """
+    Returns a dictionary. Each entry is the distance to
+    each other robot in the system
+    """
     def is_in_range(dist):
         if 3 <= dist <= 7:
             return IN_RANGE
@@ -28,3 +32,17 @@ def in_correct_direction(robot_path, final_coordinate):
     if len(robot_path) <= 1:
         return False
     return True if _dist_to_goal(robot_path[-1], final_coordinate) < _dist_to_goal(robot_path[-2], final_coordinate) else False
+
+
+import pickle
+# Saves the Q-table.
+def save_policy(self):
+    fw = open('trained_controller', 'wb')
+    pickle.dump(self.states_value, fw)
+    fw.close()
+
+# Loads a Q-table.
+def load_policy(self, file):
+    fr = open(file, 'rb')
+    self.states_value = pickle.load(fr)
+    fr.close()

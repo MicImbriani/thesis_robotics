@@ -15,7 +15,7 @@ class Ultrasonic:
 
     def sense_obstacles(self, x, y, heading):
         obstacles = [[sys.maxsize, sys.maxsize]] * self.n_rays
-        collision = []
+        collision = [False] * self.n_rays
         x1, y1, = x, y 
         start_angle = heading - self.sensor_range
         finish_angle = heading + self.sensor_range
@@ -28,10 +28,11 @@ class Ultrasonic:
                 y = int(y2 * u + y1 * (1-u))
                 if 0 < x < self.map_width and 0 < y < self.map_height:
                     # Collision detection
+                    # For each ray, check if it is colliding with something
                     if i <= 5:
                         collision_color = self.map.get_at((x, y))
-                        collision.append(True) if (collision_color[0], collision_color[1], collision_color[2]) == get_color(
-                            "black") else collision.append(False)
+                        collision[id] = True if (collision_color[0], collision_color[1], collision_color[2]) == get_color(
+                            "black") else False
                     # Normal distance
                     color = self.map.get_at((x,y))
                     self.map.set_at((x,y), (0,208,255))
