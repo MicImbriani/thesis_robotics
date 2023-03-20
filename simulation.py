@@ -23,14 +23,14 @@ class Simulation:
         # ROBOTS
         self.robot1 = DistanceRobot(self.map)
         self.robot2 = Robot(self.map)
-        self.robot3 = LearnRobot(self.map)
+        self.robot3 = DistanceRobot(self.map)
         # self.robot4 = DistanceRobot(self.map)
         self.swarm = Swarm(
             [self.robot1, self.robot2, self.robot3])
 
         # TRAJECTORY/ FORMATION
         self.formation = Formation("triangle", self.swarm.robots, self.swarm.ids)
-        self.swarm.get_end_mid_point(self.formation.end_middle_coordinate)
+        self.end_coord = self.swarm.get_end_mid_point(self.formation.end_middle_coordinate)
 
         # GRAPHICS
         self.gfx = Graphics(self.swarm.robots, self.map, MAP_SIZE, './sprites/robot.png', './sprites/MAP_empty.png', self.formation.end_middle_coordinate)
@@ -57,5 +57,6 @@ class Simulation:
             self.swarm.update_swarm(dt)
             self.gfx.update()
             pygame.display.update()
+            self.formation.get_distances()
 
         # make_plots(self.formation, self.swarm.robots)

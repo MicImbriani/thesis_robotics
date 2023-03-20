@@ -74,15 +74,17 @@ class Formation:
                     dist = euclidean(robot.position, entry)
                     self.dists[(robot.id, id)] = dist
                     robot.distances[id] = (abs(dist))
-                    robot.distances_log[id] = []
+                    robot.distances_log[id] = [(abs(dist))]
 
     def get_distances(self) -> dict:
         """ Gets current distances between robots.
         """
         dists = {}
         for robot in self.robots:
-            new_ids = copy(self.ids).remove(robot.id)
-            dists[robot.id] = dict.fromkeys(new_ids, [robot.distances_log[id][-1] for id in new_ids])
+            new_ids = copy(self.ids)
+            new_ids.remove(robot.id)
+            for id in new_ids:
+                dists[robot.id] = dict.fromkeys(new_ids, robot.distances_log[id][-1])
         return dists
 
     def compute_end_point(self):

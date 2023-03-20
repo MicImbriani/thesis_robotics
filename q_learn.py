@@ -11,39 +11,54 @@ class QLearn(Simulation):
     def __init__(self):
         super().__init__()
         self.q_table = Counter()
-        self.states_history = [State()]
+        self.states_history = []
         self.last_action = []
 
 
+    @property
+    def distances(self):
+        return self.formation.get_distances()
 
     def learn(self):
         # 1) get state of world
         self.get_state()
         # 2) select random action for each robot
-        self.get_random_actions()
+        random_actions = self.get_random_actions()
         # 3) take/simulate the action
         # get new state
-        self.take_action()
+        self.take_actions(random_actions)
+        # 4) assess how good the action was for the previous state, based on the current state
+        # 5) update previous state
+        # 6) repeat from 1 with new state
 
 
 
     # STATES
-    def get_state(self):
-        dists = get_spacing_from_dist(self.formation.get_distances())
-        # ADD MORE STUFF TO STATE
-        return State(dists, )
+    def get_states(self):
+        # dists = get_spacing_from_dist(self.formation.get_distances())
+        # # ADD MORE STUFF TO STATE
+        # return State(dists, )
+        return [robot.get_state() for robot in self.swarm]
+
 
     def store_state(self, state):
         self.states_history.append(state)
 
 
+
     # ACTIONS
-    def get_random_actions(self):
-        return [choice(available_actions) for robot in self.swarm]
-    
-    def take_action(self):
-        return
-    
+    def take_actions(self):
+        all_actions = []
+        for robot in self.swarm:
+            # if the action is legal, robot.take_action will return true, else false
+            rand_act = self._get_random_action()
+            while not robot.set_action(rand_act):
+                rand_act = self._get_random_action()
+            all_actions.append(rand_act)
+
+    def _get_random_action(self):
+        return choice(available_actions)
+
 
 
     # Q-LEARN
@@ -105,3 +120,11 @@ class QLearn(Simulation):
         self.old_score = 0
         self.lastState = []
         self.lastAction = []
+
+    def run(self):
+        self.get_states()
+        x = State(0, self.swarm, self.distances)
+
+"""
+q_learn -> learn_robot -> state 
+"""

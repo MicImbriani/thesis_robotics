@@ -3,6 +3,10 @@ class Swarm:
         self.robots = swarm
         self.assign_ids()
 
+    def __getitem__(self, idx: int):
+        return [robot for robot in self.robots if robot.id == idx][0]
+
+
     def assign_ids(self):
         self.ids = []
         for idx, robot in enumerate(self.robots):
@@ -14,9 +18,19 @@ class Swarm:
         for robot in self.robots:
             robot.end_mid_point = point
 
-    def get_state(self):
-        return
+    
 
     def update_swarm(self, dt):
         [robot.update(dt) for robot in self.robots]
 
+
+
+class LearnSwarm(Swarm):
+    def __init__(self, swarm):
+        super().__init__(swarm)
+
+
+    def get_states(self):
+        states = []
+        for robot in self.robots:
+            states.append(robot.get_state())

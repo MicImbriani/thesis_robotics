@@ -7,6 +7,7 @@ from utils.constants import *
 from utils.utils import get_direction_from_dir, get_direction_from_heading, get_relative_directions, get_heading_from_direction
 from utils.qlearn_utils import in_correct_direction, get_spacing_from_dist
 
+from state import State
 from .robot import Robot
 
 class LearnRobot(Robot):
@@ -48,9 +49,23 @@ class LearnRobot(Robot):
         return get_direction_from_heading(self.heading)
 
 
-    @property
-    def _legal_actions(self):
-        return [action for action, is_legal in zip(available_actions, self.collisions) if is_legal]
+    
+    def set_action(self, action):
+        if action in self._get_legal_actions():
+            self.next_action = action
+            return True
+        return False
+
+
+    def _get_legal_actions(self):
+        # Returns a list of legal actions
+        # Accelerate and decellerate are always legal
+        left = self.collisions[0] and self.collisions[1]
+        right = self.collisions[3] and self.collisions[4]
+        mid = self.collisions[2]
+        # Basicalli zips [LEFT, RIGHT, STRAIGHT] with [left sensors, right sensors, mid sensor]
+        return [action for action, is_legal in zip(available_actions[:3], [left,right,mid]) if is_legal]
+    
 
 
     def get_new_direction(self, turn) -> dict:
@@ -71,11 +86,18 @@ class LearnRobot(Robot):
 
 
     def accelerate(self):
-        return self.speedL*10, self.speedR*10
+        self.speedL *= 10
+        self.speedR *= 10
 
 
     def decelerate(self):
-        return self.speedL/2, self.speedR/2
+        self.speedL /= 2
+        self.speedR /= 2
 
     def get_distance_to_robots(self):
         return get_spacing_from_dist(self.distances_log)
+
+
+    def get_state(self) -> State:
+        s = State(self.id, self.other_robots, self.dists)
+        return s.get_state()

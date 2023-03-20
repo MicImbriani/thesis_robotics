@@ -8,12 +8,15 @@ def get_spacing_from_dist(dists: dict) -> dict:
     each other robot in the system
     """
     def is_in_range(dist):
-        if 3 <= dist <= 7:
-            return IN_RANGE
-        elif dist < 3:
+        print("DIST", dist)
+        ideal_dist = 55
+        dist = ideal_dist-dist # 55 - 40 15
+        if dist >= 5:
             return TOO_CLOSE
-        else:
+        elif dist <= -5:
             return TOO_FAR
+        else:
+            return IN_RANGE
 
     # Substitute every value of distances with IN_RANGE, TOO_FAR or TOO_CLOSE
     for robot, other_robots in dists.items():
