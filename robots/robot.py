@@ -82,7 +82,6 @@ class Robot:
         self.heading += (self.speedR - self.speedL) / self.w * dt
         if self.heading > 2*math.pi or self.heading< -2*math.pi:
             self.heading = 0
-        if self.id == 1 and print_flag: print("IDEAL HEADING ------->", self.heading)
 
     def store_distances(self):
         for neigh in self.other_robots:

@@ -17,6 +17,10 @@ from formation import Formation
 
 class Simulation:
     def __init__(self):
+        self.setup_simulation()
+
+
+    def setup_simulation(self):
         # MAP
         self.map = pygame.display.set_mode(MAP_SIZE)
 
@@ -29,20 +33,19 @@ class Simulation:
             [self.robot1, self.robot2, self.robot3])
 
         # TRAJECTORY/ FORMATION
-        self.formation = Formation("triangle", self.swarm.robots, self.swarm.ids)
-        self.end_coord = self.swarm.get_end_mid_point(self.formation.end_middle_coordinate)
+        self.formation = Formation(
+            "triangle", self.swarm.robots, self.swarm.ids)
+        self.end_coord = self.swarm.get_end_mid_point(
+            self.formation.end_middle_coordinate)
 
         # GRAPHICS
-        self.gfx = Graphics(self.swarm.robots, self.map, MAP_SIZE, './sprites/robot.png', './sprites/MAP_empty.png', self.formation.end_middle_coordinate)
+        self.gfx = Graphics(self.swarm.robots, self.map, MAP_SIZE, './sprites/robot.png',
+                            './sprites/MAP_empty.png', self.formation.end_middle_coordinate)
 
-
-    def run(self):
-        dt = 0
-        last_time = pygame.time.get_ticks()
-
+    def update(self, dt, last_time):
         while True:
             # Check for exit
-            if not check_stop_game():
+            if check_stop_game():
                 break
 
             # Update clock
@@ -50,13 +53,18 @@ class Simulation:
             last_time = pygame.time.get_ticks()
 
             # Update map
-            self.gfx.map.blit(self.gfx.map_img, (0,0))
-
+            self.gfx.map.blit(self.gfx.map_img, (0, 0))
 
             # ---------------------- Main ----------------------
             self.swarm.update_swarm(dt)
             self.gfx.update()
             pygame.display.update()
             self.formation.get_distances()
+
+    def run(self):
+        dt = 0
+        last_time = pygame.time.get_ticks()
+
+        self.update(dt, last_time)
 
         # make_plots(self.formation, self.swarm.robots)

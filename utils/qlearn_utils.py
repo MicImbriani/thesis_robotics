@@ -39,13 +39,13 @@ def in_correct_direction(robot_path, final_coordinate):
 
 import pickle
 # Saves the Q-table.
-def save_policy(self):
+def save_policy(sim):
     fw = open('trained_controller', 'wb')
-    pickle.dump(self.states_value, fw)
+    pickle.dump(sim.states_value, fw)
     fw.close()
 
 # Loads a Q-table.
-def load_policy(self, file):
+def load_policy(sim, file):
     fr = open(file, 'rb')
-    self.states_value = pickle.load(fr)
+    sim.states_value = pickle.load(fr)
     fr.close()

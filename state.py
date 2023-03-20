@@ -8,8 +8,17 @@ class State:
         self.other_robots = other_robots
         self.distances = dists
 
-    
-    def get_state(self):
+
+    @property
+    def current_state(self):
+        return self._get_state()
+
+
+    def update_state(self):
+        self.state = self._get_state()
+
+
+    def _get_state(self):
         """
         FINAL LOOK OF STATE FOR ROBOT1
         [
@@ -30,8 +39,6 @@ class State:
                 spacings[r2.id],
                 r2.heading]
 
-    
-
     def _get_robot(self, robot_id):
         return [robot for robot in self.other_robots if robot_id == robot_id][0]
     
@@ -48,8 +55,8 @@ class State:
         return self.distances[self.robot.id]
     
 
-    def _get_relative_position(self, other_robot):
-        return compute_distance(self.position, other_robot.position)    
+    # def _get_relative_position(self, other_robot):
+    #     return compute_distance(self.position, other_robot.position)
     
     
     @property

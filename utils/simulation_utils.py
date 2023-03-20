@@ -33,11 +33,12 @@ def get_distances_log(swarm):
 
 import pygame
 def check_stop_game():
-    running = True
+    """Returns true if game needs to be stopped. """
+    running = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            running = True
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                running = False
+                running = True
     return running
