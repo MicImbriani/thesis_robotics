@@ -41,7 +41,7 @@ class LearnRobot(Robot):
         """ 
         
         return
-
+    
 
     def old_update(self, dt):
         if get_seconds() >= self.timer:
@@ -75,10 +75,6 @@ class LearnRobot(Robot):
     def update_state(self) -> State:
         self.state.update_state()
 
-    # def get_distance_to_robots(self):
-    #     return get_spacing_from_dist(self.distances_log)
-
-
 
 
 
@@ -93,53 +89,32 @@ class LearnRobot(Robot):
         self.speedL /= 2
         self.speedR /= 2
     
-    
-    def get_action(self, state):
-        possible_directions = self._get_legal_actions()
-        state = self.state.current_state
-        
-        # print("___________________________")
-        # print(self.states_value)
+    def get_action(self, state, possible_actions):
+        state = state if not state is None else self.state.current_state
 
-        # Update Q-value
-        reward = 0  # TODO: CHANGE REWARD
-        if self.last_state:
-            last_state = self.last_state[-1]
-            last_action = self.last_action[-1]
-            max_q = self._get_max_Q(state, possible_directions)
-            self._update_Q(last_state, last_action, reward, max_q)
-
-        # (Explore vs Exploit)
-        rand_rho = uniform(0, 1)
-        action = choice(possible_directions) if rand_rho < self.exploration_rho \
-            else self._get_action_max_Q(state, possible_directions)
+        action = self.get_best_action(state, possible_actions)
 
         # Update attributes.
         self.last_state.append(state)
         self.last_action.append(action)
+        
+        # Compute reward
+        reward = 0  # TODO: CHANGE REWARD
         return action
 
 
-    def _get_legal_actions(self):
+    def get_legal_actions(self):
         # Returns a list of legal actions
         # Accelerate and decellerate are always legal
         left = self.collisions[0] and self.collisions[1]
         right = self.collisions[3] and self.collisions[4]
         mid = self.collisions[2]
         # Basically zips [LEFT, RIGHT, STRAIGHT] with [left sensors, right sensors, mid sensor]
-        return [action for action, is_legal in zip(available_actions[:3], [left, right, mid]) if is_legal]
-
-
-    # Given a state and possible actions, returns the highest Q value
-    def _get_max_Q(self, state, possible_actions):
-        q_list = []
-        for action in possible_actions:
-            q_list.append(self._get_Q_value(state, action))
-        return 0 if not q_list else max(q_list)
+        return [action for action, is_legal in zip(ALL_ACTIONS[:3], [left, right, mid]) if is_legal]
 
 
     # Given a state and possible actions, returns the action of the highest Q value
-    def _get_action_max_Q(self, state, possible_actions):
+    def get_best_action(self, state, possible_actions):
         tmp = Counter()
         for action in possible_actions:
           tmp[action] = self.getQValue(state, action)
@@ -147,15 +122,21 @@ class LearnRobot(Robot):
 
 
     # Update the Q value of a given state-action entry
-    def _update_Q(self, state, action, reward, qmax):
-        q = self._get_Q_value(state, action)
-        self.q_table[str([state, action])] = (1 - self.lr_alpha) * q + \
-            self.lr_alpha * (reward + self.discount_rate_gamma*qmax - q)
+    def update_Q(self, state, action, new_Q):
+        self.q_table[str([state, action])] = new_Q
         # MAYBE REWRITE QLEARN EQUATION
 
 
+    # Given a state and possible actions, returns the highest Q value
+    def get_max_Q(self, state, possible_actions):
+        q_list = []
+        for action in possible_actions:
+            q_list.append(self._get_Q_value(state, action))
+        return 0 if not q_list else max(q_list)
+
+
     # Return Q-value of a given state-action pair
-    def _get_Q_value(self, state, action):
+    def get_Q_value(self, state, action):
         return self.q_table[str([state, action])]
 
 

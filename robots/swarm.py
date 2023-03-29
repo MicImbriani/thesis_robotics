@@ -32,7 +32,13 @@ class LearnSwarm(Swarm):
     def __init__(self, swarm):
         super().__init__(swarm)
 
-
+    def get_actions(self):
+        return [robot.get_action() for robot in self.swarm]
+    
+    def take_actions(self):
+        for robot in self.swarm:
+            
+    
     def get_states(self):
         states = []
         for robot in self.robots:
