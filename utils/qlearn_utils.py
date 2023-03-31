@@ -19,10 +19,10 @@ def get_spacing_from_dist(dists: dict) -> dict:
             return IN_RANGE
 
     # Substitute every value of distances with IN_RANGE, TOO_FAR or TOO_CLOSE
-    for robot, other_robots in dists.items():
-        for k, v in other_robots.items():
-            dists[robot][k] = is_in_range(v)
-    return dists
+    new_dists = {}
+    for other_robot, dist in dists.items():
+        new_dists[other_robot] = is_in_range(dist)
+    return new_dists
 
 
 from utils.utils import distance

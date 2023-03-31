@@ -7,13 +7,7 @@ class State:
         self.robot = robot
         self.other_robots = other_robots
 
-
-    @property
-    def distances(self):
-        return self.robot.dists
-
-
-    def get_current_state(self):
+    def get_current_state(self, current_distances):
         """
         FINAL LOOK OF STATE
         [my heading
@@ -23,8 +17,13 @@ class State:
         robot3 spacing
         robot3 heading]
         """
-        r1, r2 = self._get_robot[0], self._get_robot[1]
-        spacings = self._get_spacing()[self.robot.id]
+        print("XDD")
+        print("ME", self.robot.id)
+        r1, r2 = self.other_robots
+        print("OTHERS", r1.id, r2.id)
+        spacings = get_spacing_from_dist(current_distances)
+        print("AAAAAAA",spacings)
+        print()
         return [self.robot.heading,
                 self._towards_goal,
                 spacings[r1.id],
@@ -32,11 +31,6 @@ class State:
                 spacings[r2.id],
                 r2.heading]
 
-    def _get_robot(self, robot_id):
-        return [robot for robot in self.other_robots if robot_id == robot_id][0]
-    
-    def _get_spacing(self):
-        return get_spacing_from_dist(self.distances)
 
     def _get_dist_logs(self):
         """

@@ -88,8 +88,8 @@ class Robot:
             self.distances_log[neigh.id].append(distance(self.position, neigh.position))
 
     def _sense_obstacles(self):
-        self.sensors_rays, self.collisions = self.sensor.sense_obstacles(self.x, self.y, self.heading)
-        return self.sensors_rays, self.collisions
+        # returns: sensors_rays, collisions
+        return self.sensor.sense_obstacles(self.x, self.y, self.heading)
 
     def update(self, dt):
         sensor_rays, collisions = self._sense_obstacles()

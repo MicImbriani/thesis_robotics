@@ -91,33 +91,26 @@ def get_direction_from_dir(dir):
 relative_directions = [UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT]
 def get_relative_directions(current_dir, new_dir):
     idx = relative_directions.index(current_dir)
-    print(idx)
-    print("CURRENT", current_dir)
-    print("NEWDIR", new_dir)
     if new_dir == STRAIGHT:
         return current_dir
     elif new_dir == LEFT:
         return relative_directions[idx-2]
     else:
         id_right = idx + 2 if idx+2 <= len(relative_directions)-1 else idx+1-len(relative_directions)
-        print("IDRIGHT",id_right)
-        print("RELATIVE DIRECTS")
-        for idx, val in enumerate(relative_directions):
-            print((idx, val))
         return relative_directions[id_right]
 
 
 def get_heading_from_direction(dir):
-    match dir['name']:
-        case 'STRAIGHT':          return 0
-        case 'UP':            return 1.57
-        case 'UP_RIGHT':      return 0.785
-        case 'RIGHT':         return 0
-        case 'DOWN_RIGHT':    return 5.495
-        case 'DOWN':          return 4.71
-        case 'DOWN_LEFT':     return 3.925
-        case 'LEFT':          return 3.14
-        case 'UP_LEFT':       return 2.355
+    match dir:
+        case (0, 0): return 0
+        case (0, -1): return 1.57
+        case (1, -1): return 0.785
+        case (1, 0): return 0
+        case (1, 1): return 5.495
+        case (0, 1): return 4.71
+        case (-1, 1): return 3.925
+        case (-1, 0): return 3.14
+        case (-1, -1): return 2.355
 
 
 

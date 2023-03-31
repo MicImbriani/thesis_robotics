@@ -18,6 +18,8 @@ class LearnRobot(Robot):
         self.timer_step = 0.5
         self.timer = get_seconds() + self.timer_step
         self.history = [self.position]
+        _, self.collisions = self._sense_obstacles()
+
 
         # Q-LEARN
         self.q_table = Counter()
@@ -26,7 +28,8 @@ class LearnRobot(Robot):
         self.current_dists = {}
 
     def init_state(self):
-        self.state = State(self.id, self.other_robots)
+        print("AAAAA", [r.id for r in self.other_robots])
+        self.state = State(self, self.other_robots)
 
     ################ UPDATE ################
     def update(self, dt):
@@ -41,6 +44,7 @@ class LearnRobot(Robot):
         >> > LearnRobot: Executes the individual Q-learn
         >>>>> State: gets updated to give information about the current state
         """ 
+        _, self.collisions = self._sense_obstacles()
         self.kinematics(dt)
         self.store_distances()
 
@@ -73,8 +77,8 @@ class LearnRobot(Robot):
 
     ################ STATE ################
 
-    def get_new_state(self):
-        return self.state.get_current_state()
+    def get_new_state(self, current_distances):
+        return self.state.get_current_state(current_distances)
 
 
     ################   ACTIONS   ################
@@ -96,7 +100,7 @@ class LearnRobot(Robot):
         right = self.collisions[3] and self.collisions[4]
         mid = self.collisions[2]
         # Basically zips [LEFT, RIGHT, STRAIGHT] with [left sensors, right sensors, mid sensor]
-        return [action for action, is_legal in zip(ALL_ACTIONS[:3], [left, right, mid]) if is_legal]
+        return [action for action, obstacle_sensed in zip(ALL_ACTIONS[:3], [left, right, mid]) if not obstacle_sensed]
 
 
     # Given list of possible actions and the current state, returns the best action
@@ -116,7 +120,7 @@ class LearnRobot(Robot):
     def get_best_action(self, state, possible_actions):
         tmp = Counter()
         for action in possible_actions:
-          tmp[action] = self.getQValue(state, action)
+            tmp[action] = self.get_Q_value(state, action)
         return tmp.argMax()
 
 
@@ -160,8 +164,8 @@ class LearnRobot(Robot):
         """
         relative_direction = get_relative_directions(
             self.current_direction, turn)
-        new_direction = add(array(self.current_direction['coord']),
-                            array(relative_direction['coord']))
+        new_direction = add(array(self.current_direction),
+                            array(relative_direction))
 
 
         def treshold(x):
@@ -190,7 +194,7 @@ class LearnRobot(Robot):
     def get_max_Q(self, state, possible_actions):
         q_list = []
         for action in possible_actions:
-            q_list.append(self._get_Q_value(state, action))
+            q_list.append(self.get_Q_value(state, action))
         return 0 if not q_list else max(q_list)
 
 
@@ -202,7 +206,7 @@ class LearnRobot(Robot):
         # 1) distance error between robot and r1
         # 2) distance error between robot and r2
         # 3) distance to end goal
-        dists = current_distances.values()
+        dists = list(current_distances.values())
         dist_r1 = dists[0]
         dist_r2 = dists[1]
         return dist_r1 + dist_r2 + dist_to_endpoint

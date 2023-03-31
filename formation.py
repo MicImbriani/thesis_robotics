@@ -63,7 +63,6 @@ class Formation:
         with respects to every other robot in the swarm.
         """
         starts = [x[0] for x in self.formation]
-        print("NAMES", [robot.name for robot in self.robots])
         for robot in self.robots:
             robot.distances = {}
             robot.distances_log = {}

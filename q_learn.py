@@ -21,7 +21,7 @@ class QLearn(Simulation):
         # Q-learn params
         self.alpha = alpha
         self.gamma = gamma
-        self.rho = rho
+        self.exploration_rho = rho
         self.nu = nu
 
     def setup_swarm(self):
@@ -34,35 +34,37 @@ class QLearn(Simulation):
         self.robot3 = LearnRobot(self.map)
         # self.robot4 = DistanceRobot(self.map)
         self.swarm = Swarm(
-            [self.robot1])#, self.robot2, self.robot3])
+            [self.robot1, self.robot2, self.robot3])
 
 
     # The q-learning step
-    def q_learning(self, iterations):
-        state = self.last_state
+    def q_learning(self, dt):
         current_distances = self.formation.get_distances()
         dists_to_endpoint = self.formation.dist_to_end_poit()
-        problem = self.swarm
 
-        rand_nu = uniform(0, 1)
-        # TODO: maybe make method for computing state?
-        if rand_nu < self.nu or state is None:
-            state = problem.getRandomState()
+        # rand_nu = uniform(0, 1)
+        # # TODO: maybe make method for computing state?
+        # if rand_nu < self.nu or state is None:
+        #     state = problem.getRandomState()
 
         for robot in self.swarm:
+            state = robot.last_state
             if state is None:
                 state = robot.get_state()
             # Get all possible actions
             possible_actions = robot.get_legal_actions()
             # (Explore vs Exploit)
             rand_rho = uniform(0, 1)
-            action = choice(possible_actions) if rand_rho < self.exploration_rho\
-                else robot.get_action(state, possible_actions)
+            if rand_rho < self.exploration_rho:
+                print("POSSIBLE", possible_actions)
+                action = choice(possible_actions)
+            else:
+                action = robot.get_action(state, possible_actions)
 
             # Take action and get reward and next state
-            robot.take_next_action(action, self.dt)
+            robot.take_next_action(action, dt)
             reward = robot.compute_reward(current_distances[robot.id], dists_to_endpoint[robot.id])
-            new_state = robot.get_new_state()
+            new_state = robot.get_new_state(current_distances[robot.id])
 
             # Update Q-table
             Q = robot.get_Q_value(state, action)
@@ -71,7 +73,7 @@ class QLearn(Simulation):
             robot.update_Q(state, action, new_Q)
 
             # Set state for next iteration
-            self.last_state = new_state
+            robot.last_state = new_state
 
 
     @property
@@ -89,7 +91,7 @@ class QLearn(Simulation):
             self.gfx.map.blit(self.gfx.map_img, (0, 0))
 
             # ---------------------- Main ----------------------
-            # self.q_learning()
+            self.q_learning(dt)
             self.swarm.update_swarm(dt)
             self.gfx.update()
             pygame.display.update()
@@ -102,6 +104,7 @@ class QLearn(Simulation):
         for robot in self.swarm:
             robot.init_state()
 
+
         # First iteration update
         # Update clock
         dt = (pygame.time.get_ticks() - tick)/1000
@@ -111,7 +114,7 @@ class QLearn(Simulation):
         self.gfx.map.blit(self.gfx.map_img, (0, 0))
 
         # ---------------------- Main ----------------------
-        # if not first_iter: self.q_learning()
+        self.q_learning(dt)
         self.swarm.update_swarm(dt)
         self.gfx.update()
         pygame.display.update()
