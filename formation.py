@@ -63,6 +63,7 @@ class Formation:
         with respects to every other robot in the swarm.
         """
         starts = [x[0] for x in self.formation]
+        print("NAMES", [robot.name for robot in self.robots])
         for robot in self.robots:
             robot.distances = {}
             robot.distances_log = {}
@@ -70,7 +71,7 @@ class Formation:
                 if id == robot.id:
                     continue
                 else:
-                    dist = euclidean(robot.position, entry)
+                    dist = distance(robot.position, entry)
                     self.dists[(robot.id, id)] = dist
                     robot.distances[id] = (abs(dist))
                     robot.distances_log[id] = [(abs(dist))]

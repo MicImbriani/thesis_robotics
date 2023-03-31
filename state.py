@@ -3,7 +3,7 @@ from utils.utils import distance
 from utils.qlearn_utils import in_correct_direction, get_spacing_from_dist
 
 class State:
-    def __init__(self, robot, other_robots, dists):
+    def __init__(self, robot, other_robots):
         self.robot = robot
         self.other_robots = other_robots
 

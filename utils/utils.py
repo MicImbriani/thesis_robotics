@@ -1,5 +1,6 @@
 import pygame
 from numpy import array
+from numpy.linalg import norm
 from scipy.spatial.distance import euclidean
 
 def distance(point1, point2):
@@ -90,10 +91,19 @@ def get_direction_from_dir(dir):
 relative_directions = [UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT]
 def get_relative_directions(current_dir, new_dir):
     idx = relative_directions.index(current_dir)
-    if new_dir == LEFT:
+    print(idx)
+    print("CURRENT", current_dir)
+    print("NEWDIR", new_dir)
+    if new_dir == STRAIGHT:
+        return current_dir
+    elif new_dir == LEFT:
         return relative_directions[idx-2]
     else:
-        id_right = idx + 2 if idx+2 <= len(relative_directions) else idx+2-len(relative_directions)
+        id_right = idx + 2 if idx+2 <= len(relative_directions)-1 else idx+1-len(relative_directions)
+        print("IDRIGHT",id_right)
+        print("RELATIVE DIRECTS")
+        for idx, val in enumerate(relative_directions):
+            print((idx, val))
         return relative_directions[id_right]
 
 

@@ -1,6 +1,6 @@
 from random import choice, uniform
 from numpy import array, add
-from math import cos, sin
+from math import cos, sin, pi
 from time import time as get_seconds
 
 from utils.constants import *
@@ -15,20 +15,21 @@ class LearnRobot(Robot):
     def __init__(self, game_map, startpos=None):
         super().__init__(game_map, startpos)
         self.name = "LearnRobot"
-        self.timer_step = 1
+        self.timer_step = 0.5
         self.timer = get_seconds() + self.timer_step
         self.history = [self.position]
 
         # Q-LEARN
-        self.state = State(self.id, self.other_robots, self.dists)
         self.q_table = Counter()
         self.last_state = []
         self.last_action = []
         self.current_dists = {}
 
+    def init_state(self):
+        self.state = State(self.id, self.other_robots)
 
     ################ UPDATE ################
-    def update(dt):
+    def update(self, dt):
         """ TODO: update is called from the Swarm object.
         Need to make it so that the update method executes the whole
         learning for the robot.
@@ -40,13 +41,14 @@ class LearnRobot(Robot):
         >> > LearnRobot: Executes the individual Q-learn
         >>>>> State: gets updated to give information about the current state
         """ 
-        
-        return
+        self.kinematics(dt)
+        self.store_distances()
+
     
 
-    def old_update(self, dt):
+    def kinematics(self, dt):
         if get_seconds() >= self.timer:
-            new_dir = self.get_new_direction(choice([LEFT]))
+            new_dir = self._get_new_direction(choice([LEFT, RIGHT, STRAIGHT]))
             # new_speedL, new_speedR = direction_coord[0]*self.minspeed, direction_coord[1]*self.minspeed
             # self.speedL += new_speedL
             # self.speedR += new_speedR
@@ -66,8 +68,6 @@ class LearnRobot(Robot):
         # S(t) = S(t-1) + k*v(t)
         self.x += v * cos(self.heading) * dt
         self.y -= v * sin(self.heading) * dt
-
-
 
 
 

@@ -13,7 +13,7 @@ from sensor import Ultrasonic
 class Robot:
     def __init__(self, game_map, startpos=None):
         # robot dims 
-        self.name = None
+        self.name = "Robot"
         self.w = robot_width
         self._m2p = 3779.52 #meters -> pixels
         self.game_map = game_map

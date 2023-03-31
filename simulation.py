@@ -17,21 +17,23 @@ from formation import Formation
 
 class Simulation:
     def __init__(self):
+        self.setup_swarm()
         self.setup_simulation()
 
 
-    def setup_simulation(self):
+    def setup_swarm(self):
         # MAP
         self.map = pygame.display.set_mode(MAP_SIZE)
 
         # ROBOTS
         self.robot1 = DistanceRobot(self.map)
         self.robot2 = Robot(self.map)
-        self.robot3 = DistanceRobot(self.map)
+        self.robot3 = LearnRobot(self.map)
         # self.robot4 = DistanceRobot(self.map)
         self.swarm = Swarm(
             [self.robot1, self.robot2, self.robot3])
 
+    def setup_simulation(self):
         # TRAJECTORY/ FORMATION
         self.formation = Formation(
             "triangle", self.swarm.robots, self.swarm.ids)
@@ -43,15 +45,13 @@ class Simulation:
         self.gfx = Graphics(self.swarm.robots, self.map, MAP_SIZE, './sprites/robot.png',
                             './sprites/MAP_empty.png', self.formation.end_middle_coordinate)
 
-    def update(self, dt, last_time):
-        while True:
-            # Check for exit
-            if check_stop_game():
-                break
+    def update(self, tick):
+        # Check for exit
+        while not check_stop_game():
 
             # Update clock
-            dt = (pygame.time.get_ticks() - last_time)/1000
-            last_time = pygame.time.get_ticks()
+            dt = (pygame.time.get_ticks() - tick)/1000
+            tick = pygame.time.get_ticks()
 
             # Update map
             self.gfx.map.blit(self.gfx.map_img, (0, 0))
@@ -63,9 +63,12 @@ class Simulation:
             self.formation.get_distances()
 
     def run(self):
-        dt = 0
-        last_time = pygame.time.get_ticks()
+        tick = pygame.time.get_ticks()
 
-        self.update(dt, last_time)
+        for robot in self.swarm:
+            if robot.name == "LearnRobot":
+                robot.init_state()
+
+        self.update(tick)
 
         # make_plots(self.formation, self.swarm.robots)

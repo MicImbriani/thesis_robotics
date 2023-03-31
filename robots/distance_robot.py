@@ -14,19 +14,13 @@ class DistanceRobot(Robot):
         self.name = "DistanceRobot"
         self.K = 2
 
-    def compute_wheel_vel(self):
+    def set_wheel_speed(self):
         x_tot, y_tot = self.get_velocity()
         
         v_star = (self.minspeed-x_tot, self.minspeed-y_tot)
-        # L = self.w
-        # w = (2*v_star[1]) / L
-        # Vl = (v_star[0] - (L/2)*w) / (L)
-        # Vr = (v_star[0] - (L/2)*w) / (L)
         self.speedL = v_star[0] 
         self.speedR = v_star[1]
 
-        # self.speedR = self.minspeed - x_tot
-        # self.speedL = self.minspeed - y_tot
         if print_flag: print("SPEEEED", self.speedL, self.speedR)
 
     def get_velocity(self) -> tuple[float,float]:
@@ -63,6 +57,6 @@ class DistanceRobot(Robot):
 
 
     def update(self, dt):
-        self.compute_wheel_vel()
+        self.set_wheel_speed()
         self.kinematics(dt)
         self.store_distances()
