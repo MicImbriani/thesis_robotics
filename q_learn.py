@@ -1,5 +1,6 @@
 import pygame
 from random import choice, uniform
+from time import time as get_seconds
 
 from utils.constants import *
 from utils.dimensions import *
@@ -18,6 +19,8 @@ from formation import Formation
 class QLearn(Simulation):
     def __init__(self, alpha, gamma, rho, nu):
         super().__init__()
+        self.timer_step = 0.5
+        self.timer = get_seconds() + self.timer_step
         # Q-learn params
         self.alpha = alpha
         self.gamma = gamma
@@ -55,14 +58,14 @@ class QLearn(Simulation):
             possible_actions = robot.get_legal_actions()
             # (Explore vs Exploit)
             rand_rho = uniform(0, 1)
-            if rand_rho < self.exploration_rho:
-                print("POSSIBLE", possible_actions)
-                action = choice(possible_actions)
-            else:
-                action = robot.get_action(state, possible_actions)
+            action = choice(possible_actions)
+            # if rand_rho < self.exploration_rho:
+            #     action = choice(possible_actions)
+            # else:
+            #     action = robot.get_action(state, possible_actions)
 
             # Take action and get reward and next state
-            robot.take_next_action(action, dt)
+            robot.take_next_action(action)
             reward = robot.compute_reward(current_distances[robot.id], dists_to_endpoint[robot.id])
             new_state = robot.get_new_state(current_distances[robot.id])
 
@@ -91,7 +94,9 @@ class QLearn(Simulation):
             self.gfx.map.blit(self.gfx.map_img, (0, 0))
 
             # ---------------------- Main ----------------------
-            self.q_learning(dt)
+            if get_seconds() >= self.timer:
+                self.q_learning(dt)
+                self.timer = get_seconds() + self.timer_step
             self.swarm.update_swarm(dt)
             self.gfx.update()
             pygame.display.update()

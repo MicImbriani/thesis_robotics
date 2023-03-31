@@ -1,7 +1,5 @@
-from random import choice, uniform
 from numpy import array, add
 from math import cos, sin, pi
-from time import time as get_seconds
 
 from utils.constants import *
 from utils.counter import Counter
@@ -15,8 +13,6 @@ class LearnRobot(Robot):
     def __init__(self, game_map, startpos=None):
         super().__init__(game_map, startpos)
         self.name = "LearnRobot"
-        self.timer_step = 0.5
-        self.timer = get_seconds() + self.timer_step
         self.history = [self.position]
         _, self.collisions = self._sense_obstacles()
 
@@ -28,7 +24,6 @@ class LearnRobot(Robot):
         self.current_dists = {}
 
     def init_state(self):
-        print("AAAAA", [r.id for r in self.other_robots])
         self.state = State(self, self.other_robots)
 
     ################ UPDATE ################
@@ -47,26 +42,11 @@ class LearnRobot(Robot):
         _, self.collisions = self._sense_obstacles()
         self.kinematics(dt)
         self.store_distances()
+        # Add current position to the history of robot's positions
+        self.history.append(self.position)
 
-    
 
     def kinematics(self, dt):
-        if get_seconds() >= self.timer:
-            new_dir = self._get_new_direction(choice([LEFT, RIGHT, STRAIGHT]))
-            # new_speedL, new_speedR = direction_coord[0]*self.minspeed, direction_coord[1]*self.minspeed
-            # self.speedL += new_speedL
-            # self.speedR += new_speedR
-
-            # HARDCODED HEADING CHANGE
-            self.heading = get_heading_from_direction(new_dir)
-
-            # Add current position to the history of robot's positions
-            self.history.append(self.position)
-            # Check if it's going in right direction
-            print(in_correct_direction(self.path, self.end_mid_point))
-
-            self.timer = get_seconds() + self.timer_step
-
         v = (self.speedL + self.speedR) / 2
         # equation space-time-velocity
         # S(t) = S(t-1) + k*v(t)
@@ -84,13 +64,13 @@ class LearnRobot(Robot):
     ################   ACTIONS   ################
 
     def accelerate(self):
-        self.speedL *= 10
-        self.speedR *= 10
+        self.speedL += 30
+        self.speedR += 30
 
 
     def decelerate(self):
-        self.speedL /= 2
-        self.speedR /= 2
+        self.speedL -= 30
+        self.speedR -= 30
 
 
     def get_legal_actions(self):
@@ -100,7 +80,7 @@ class LearnRobot(Robot):
         right = self.collisions[3] and self.collisions[4]
         mid = self.collisions[2]
         # Basically zips [LEFT, RIGHT, STRAIGHT] with [left sensors, right sensors, mid sensor]
-        return [action for action, obstacle_sensed in zip(ALL_ACTIONS[:3], [left, right, mid]) if not obstacle_sensed]
+        return [action for action, obstacle_sensed in zip(ALL_ACTIONS[:3], [left, right, mid]) if not obstacle_sensed] + [ACCELERATE, DECELERATE]
 
 
     # Given list of possible actions and the current state, returns the best action
@@ -124,35 +104,16 @@ class LearnRobot(Robot):
         return tmp.argMax()
 
 
-    # Called as the last iteration
-    def on_end(self, score):
-        # Update Q-values.
-        reward = score - self.old_score
-        last_state = self.last_state[-1]
-        last_action = self.last_action[-1]
-        self._update_Q(last_state, last_action, reward, 0)
-        # Reset attributes.
-        self.old_score = 0
-        self.lastState = []
-        self.lastAction = []
+    def take_next_action(self, next_action):
+        if next_action == ACCELERATE:
+            self.accelerate()
+        elif next_action == DECELERATE:
+            self.decelerate()
+        else:
+            relative_dir = self._get_new_direction(next_action)
+            # HARDCODED HEADING CHANGE
+            self.heading = get_heading_from_direction(relative_dir)
 
-
-    def take_next_action(self, next_action, dt):
-        relative_dir = self._get_new_direction(next_action)
-
-        # HARDCODED HEADING CHANGE
-        self.heading = get_heading_from_direction(relative_dir)
-
-        # Add current position to the history of robot's positions
-        self.history.append(self.position)
-        # Check if it's going in right direction
-        print(in_correct_direction(self.path, self.end_mid_point))
-
-        v = (self.speedL + self.speedR) / 2
-        # equation space-time-velocity
-        # S(t) = S(t-1) + k*v(t)
-        self.x += v * cos(self.heading) * dt
-        self.y -= v * sin(self.heading) * dt
 
 
     def _get_new_direction(self, turn) -> dict:
@@ -210,3 +171,16 @@ class LearnRobot(Robot):
         dist_r1 = dists[0]
         dist_r2 = dists[1]
         return dist_r1 + dist_r2 + dist_to_endpoint
+    
+
+    # Called as the last iteration
+    def on_end(self, score):
+        # Update Q-values.
+        reward = score - self.old_score
+        last_state = self.last_state[-1]
+        last_action = self.last_action[-1]
+        self._update_Q(last_state, last_action, reward, 0)
+        # Reset attributes.
+        self.old_score = 0
+        self.lastState = []
+        self.lastAction = []

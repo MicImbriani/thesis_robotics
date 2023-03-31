@@ -8,7 +8,6 @@ def get_spacing_from_dist(dists: dict) -> dict:
     each other robot in the system
     """
     def is_in_range(dist):
-        print("DIST", dist)
         ideal_dist = 55
         dist = ideal_dist-dist # 55 - 40 15
         if dist >= 5:

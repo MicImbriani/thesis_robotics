@@ -17,13 +17,8 @@ class State:
         robot3 spacing
         robot3 heading]
         """
-        print("XDD")
-        print("ME", self.robot.id)
         r1, r2 = self.other_robots
-        print("OTHERS", r1.id, r2.id)
         spacings = get_spacing_from_dist(current_distances)
-        print("AAAAAAA",spacings)
-        print()
         return [self.robot.heading,
                 self._towards_goal,
                 spacings[r1.id],
