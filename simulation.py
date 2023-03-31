@@ -43,7 +43,7 @@ class Simulation:
 
         # GRAPHICS
         self.gfx = Graphics(self.swarm.robots, self.map, MAP_SIZE, './sprites/robot.png',
-                            './sprites/MAP_empty.png', self.formation.end_middle_coordinate)
+                            './sprites/MAP.png', self.formation.end_middle_coordinate)
 
     def update(self, tick):
         # Check for exit

@@ -15,6 +15,11 @@ class LearnRobot(Robot):
         self.name = "LearnRobot"
         self.history = [self.position]
         _, self.collisions = self._sense_obstacles()
+        # MOVEMENT SPEEDS
+        self.max_speed = 50
+        self.min_speed = 10
+        self.acc_increment = 10
+        self.dec_increment = 10
 
 
         # Q-LEARN
@@ -64,23 +69,36 @@ class LearnRobot(Robot):
     ################   ACTIONS   ################
 
     def accelerate(self):
-        self.speedL += 30
-        self.speedR += 30
+        # RIGHT
+        if self.speedL + self.acc_increment <= self.max_speed:
+            self.speedL += self.acc_increment
+        else: self.speedL = self.max_speed
+        # LEFT
+        if self.speedR + self.acc_increment <= self.max_speed: 
+            self.speedR += self.acc_increment
+        else: self.speedR = self.max_speed
 
 
     def decelerate(self):
-        self.speedL -= 30
-        self.speedR -= 30
+        # RIGHT
+        if self.speedL - self.dec_increment >= self.min_speed:
+            self.speedR -= self.dec_increment
+        else: self.speedR = self.min_speed
+        # LEFT
+        if self.speedL - self.dec_increment >= self.min_speed:
+            self.speedL -= self.dec_increment
+        else: self.speedL = self.min_speed
 
 
     def get_legal_actions(self):
         # Returns a list of legal actions
         # Accelerate and decellerate are always legal
-        left = self.collisions[0] and self.collisions[1]
-        right = self.collisions[3] and self.collisions[4]
+        right = self.collisions[0] and self.collisions[1]
+        left = self.collisions[3] and self.collisions[4]
         mid = self.collisions[2]
+        acc_dec = [DECELERATE] if (right and left and mid) else [ACCELERATE, DECELERATE]
         # Basically zips [LEFT, RIGHT, STRAIGHT] with [left sensors, right sensors, mid sensor]
-        return [action for action, obstacle_sensed in zip(ALL_ACTIONS[:3], [left, right, mid]) if not obstacle_sensed] + [ACCELERATE, DECELERATE]
+        return [action for action, obstacle_sensed in zip(ALL_ACTIONS[:3], [left, right, mid]) if not obstacle_sensed] + acc_dec
 
 
     # Given list of possible actions and the current state, returns the best action

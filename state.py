@@ -39,8 +39,8 @@ class State:
 
     # def _get_relative_position(self, other_robot):
     #     return distance(self.position, other_robot.position)
-    
-    
+
+
     @property
     def _towards_goal(self):
         return in_correct_direction(self.robot.path, self.robot.end_mid_point)

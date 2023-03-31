@@ -29,7 +29,7 @@ class Ultrasonic:
                 if 0 < x < self.map_width and 0 < y < self.map_height:
                     # Collision detection
                     # For each ray, check if it is colliding with something
-                    if i <= 5:
+                    if i <= 50:
                         collision_color = self.map.get_at((x, y))
                         collision[id] = True if (collision_color[0], collision_color[1], collision_color[2]) == get_color(
                             "black") else False

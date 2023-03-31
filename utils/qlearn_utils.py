@@ -1,6 +1,6 @@
-IN_RANGE = 0
-TOO_FAR = 1
-TOO_CLOSE = -1
+IN_RANGE = "IN RANGE"
+TOO_FAR = "TOO FAR"
+TOO_CLOSE = "TOO CLOSE"
 
 def get_spacing_from_dist(dists: dict) -> dict:
     """

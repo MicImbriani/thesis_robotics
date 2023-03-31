@@ -19,7 +19,7 @@ from formation import Formation
 class QLearn(Simulation):
     def __init__(self, alpha, gamma, rho, nu):
         super().__init__()
-        self.timer_step = 0.5
+        self.timer_step = 0.2
         self.timer = get_seconds() + self.timer_step
         # Q-learn params
         self.alpha = alpha
@@ -52,8 +52,10 @@ class QLearn(Simulation):
 
         for robot in self.swarm:
             state = robot.last_state
-            if state is None:
-                state = robot.get_state()
+            if robot.id == 0:
+                print("STATE", state)
+            # if state is None:
+            #     state = robot.get_state()
             # Get all possible actions
             possible_actions = robot.get_legal_actions()
             # (Explore vs Exploit)
@@ -77,6 +79,7 @@ class QLearn(Simulation):
 
             # Set state for next iteration
             robot.last_state = new_state
+            # print(robot.q_table)
 
 
     @property
@@ -85,7 +88,9 @@ class QLearn(Simulation):
 
 
     def update(self, tick):
-        while not check_stop_game():  
+        sim_counter = 0
+        sim_iterations = 1000
+        while not check_stop_game() and sim_counter <= sim_iterations:
             # Update clock
             dt = (pygame.time.get_ticks() - tick)/1000
             tick = pygame.time.get_ticks()
@@ -101,6 +106,8 @@ class QLearn(Simulation):
             self.gfx.update()
             pygame.display.update()
             self.formation.get_distances()
+            sim_counter += 1
+            print(sim_counter)
 
 
     def run(self):
@@ -127,3 +134,4 @@ class QLearn(Simulation):
         
         self.update(tick)
         
+
