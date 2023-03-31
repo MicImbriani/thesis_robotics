@@ -4,6 +4,10 @@ class Swarm:
         self.assign_ids()
 
 
+    def set_formation(self, formation):
+        self.formation = formation
+
+
     def __getitem__(self, idx: int):
         return [robot for robot in self.robots if robot.id == idx][0]
 
@@ -32,13 +36,7 @@ class LearnSwarm(Swarm):
     def __init__(self, swarm):
         super().__init__(swarm)
 
-    def get_actions(self):
-        return [robot.get_action() for robot in self.swarm]
-    
-    def take_actions(self):
-        for robot in self.swarm:
-            
-    
+
     def get_states(self):
         states = []
         for robot in self.robots:

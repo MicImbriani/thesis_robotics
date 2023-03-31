@@ -1,12 +1,11 @@
 import pygame
-from numpy.linalg import norm
 from numpy import array
+from scipy.spatial.distance import euclidean
 
 def distance(point1, point2):
-    point1 = array(point1)
-    point2 = array(point2)
-    return norm(point1-point2)
+    return euclidean(point1, point2)
 
+# used for sensors rays only
 def ray_distance(point1, point2, dist):
     res = distance(point1, point2)
     return 0 if res >= dist else res
@@ -112,10 +111,6 @@ def get_heading_from_direction(dir):
 
 
 
-
-from scipy.spatial.distance import euclidean
-def compute_distance(r1, r2):
-    return euclidean(r1, r2)
 
 
 # COMPUTING COORDS ALONG TWO POINTS

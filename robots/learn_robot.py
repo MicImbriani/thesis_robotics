@@ -24,6 +24,7 @@ class LearnRobot(Robot):
         self.q_table = Counter()
         self.last_state = []
         self.last_action = []
+        self.current_dists = {}
 
 
     ################ UPDATE ################
@@ -72,10 +73,8 @@ class LearnRobot(Robot):
 
     ################ STATE ################
 
-    def update_state(self) -> State:
-        self.state.update_state()
-
-
+    def get_new_state(self):
+        return self.state.get_current_state()
 
 
     ################   ACTIONS   ################
@@ -88,19 +87,6 @@ class LearnRobot(Robot):
     def decelerate(self):
         self.speedL /= 2
         self.speedR /= 2
-    
-    def get_action(self, state, possible_actions):
-        state = state if not state is None else self.state.current_state
-
-        action = self.get_best_action(state, possible_actions)
-
-        # Update attributes.
-        self.last_state.append(state)
-        self.last_action.append(action)
-        
-        # Compute reward
-        reward = 0  # TODO: CHANGE REWARD
-        return action
 
 
     def get_legal_actions(self):
@@ -113,31 +99,25 @@ class LearnRobot(Robot):
         return [action for action, is_legal in zip(ALL_ACTIONS[:3], [left, right, mid]) if is_legal]
 
 
+    # Given list of possible actions and the current state, returns the best action
+    def get_action(self, state, possible_actions):
+        state = state if not state is None else self.state.current_state
+
+        action = self.get_best_action(state, possible_actions)
+
+        # Update attributes.
+        self.last_state.append(state)
+        self.last_action.append(action)
+        
+        return action
+
+
     # Given a state and possible actions, returns the action of the highest Q value
     def get_best_action(self, state, possible_actions):
         tmp = Counter()
         for action in possible_actions:
           tmp[action] = self.getQValue(state, action)
         return tmp.argMax()
-
-
-    # Update the Q value of a given state-action entry
-    def update_Q(self, state, action, new_Q):
-        self.q_table[str([state, action])] = new_Q
-        # MAYBE REWRITE QLEARN EQUATION
-
-
-    # Given a state and possible actions, returns the highest Q value
-    def get_max_Q(self, state, possible_actions):
-        q_list = []
-        for action in possible_actions:
-            q_list.append(self._get_Q_value(state, action))
-        return 0 if not q_list else max(q_list)
-
-
-    # Return Q-value of a given state-action pair
-    def get_Q_value(self, state, action):
-        return self.q_table[str([state, action])]
 
 
     # Called as the last iteration
@@ -199,15 +179,30 @@ class LearnRobot(Robot):
 
 
     ################ Q-LEARN ################
-    def learn_step(self):
-        # 1) get state of world
-        self.update_state()
-        # 2) select random action for each robot
-        # self.generate_and_set_actions()
-        new_action = self.get_action()
-        # 3) take/simulate the action
-        self.take_next_action(new_action)
-        # 3.5) get new state
-        # 4) assess how good the action was for the previous state, based on the current state
-        # 5) update previous state
-        # 6) repeat from 1 with new state
+    
+    # Update the Q value of a given state-action entry
+    def update_Q(self, state, action, new_Q):
+        self.q_table[str([state, action])] = new_Q
+        # MAYBE REWRITE QLEARN EQUATION
+
+
+    # Given a state and possible actions, returns the highest Q value
+    def get_max_Q(self, state, possible_actions):
+        q_list = []
+        for action in possible_actions:
+            q_list.append(self._get_Q_value(state, action))
+        return 0 if not q_list else max(q_list)
+
+
+    # Return Q-value of a given state-action pair
+    def get_Q_value(self, state, action):
+        return self.q_table[str([state, action])]
+    
+    def compute_reward(self, current_distances, dist_to_endpoint):
+        # 1) distance error between robot and r1
+        # 2) distance error between robot and r2
+        # 3) distance to end goal
+        dists = current_distances.values()
+        dist_r1 = dists[0]
+        dist_r2 = dists[1]
+        return dist_r1 + dist_r2 + dist_to_endpoint

@@ -1,34 +1,27 @@
 from copy import deepcopy
-from utils.utils import compute_distance
+from utils.utils import distance
 from utils.qlearn_utils import in_correct_direction, get_spacing_from_dist
 
 class State:
     def __init__(self, robot, other_robots, dists):
         self.robot = robot
         self.other_robots = other_robots
-        self.distances = dists
 
 
     @property
-    def current_state(self):
-        return self._get_state()
+    def distances(self):
+        return self.robot.dists
 
 
-    def update_state(self):
-        self.state = self._get_state()
-
-
-    def _get_state(self):
+    def get_current_state(self):
         """
-        FINAL LOOK OF STATE FOR ROBOT1
-        [
-        my heading
+        FINAL LOOK OF STATE
+        [my heading
         going towards goal
         robot2 spacing
         robot2 heading
         robot3 spacing
-        robot3 heading
-        ]
+        robot3 heading]
         """
         r1, r2 = self._get_robot[0], self._get_robot[1]
         spacings = self._get_spacing()[self.robot.id]
@@ -56,7 +49,7 @@ class State:
     
 
     # def _get_relative_position(self, other_robot):
-    #     return compute_distance(self.position, other_robot.position)
+    #     return distance(self.position, other_robot.position)
     
     
     @property

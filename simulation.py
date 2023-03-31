@@ -35,6 +35,7 @@ class Simulation:
         # TRAJECTORY/ FORMATION
         self.formation = Formation(
             "triangle", self.swarm.robots, self.swarm.ids)
+        self.swarm.set_formation(self.formation)
         self.end_coord = self.swarm.get_end_mid_point(
             self.formation.end_middle_coordinate)
 
