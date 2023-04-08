@@ -33,6 +33,11 @@ class LearnRobot(Robot):
     def init_state(self):
         self.state = State(self, self.other_robots)
 
+    @property
+    def is_on_track(self):
+        return True if [int(self.position[0]), int(self.position[1])] in self.trajectory.line.tolist() else False
+    
+
     ################ UPDATE ################
     def update(self, dt):
         """ TODO: update is called from the Swarm object.

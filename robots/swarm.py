@@ -58,5 +58,5 @@ class LearnSwarm(Swarm):
 
 
     def set_base_formation_area(self):
-        r1, r2, r3 = [robot[0] for robot in self.formation]
+        r1, r2, r3 = [robot[0] for robot in self.formation.formation]
         self.base_formation_area= self.compute_triangle_area(r1, r2, r3)

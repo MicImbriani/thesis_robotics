@@ -1,9 +1,10 @@
 import pickle
 # Saves the Q-table.
 
-def save_policy(sim):
+
+def save_policy(previous_Q_tables):
     fw = open('trained_controller', 'wb')
-    pickle.dump(sim.get_Q_tables(), fw)
+    pickle.dump(previous_Q_tables, fw)
     fw.close()
 
 # Loads a Q-table.

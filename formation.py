@@ -10,7 +10,7 @@ class Trajectory:
         self.start = coords[0]
         self.end = coords[1]
         self.line = connect(array([[self.start[0], self.start[1]],
-                                    [self.end[0], self.end[1]]]))
+                                   [self.end[0], self.end[1]]]))
 
 
     # Calculate at the end of train episode
@@ -45,7 +45,7 @@ class Formation:
         self.assign_dists()
     
     def _triangle_formation(self):
-        start = [(200, 100), (250, 100), (225, 150)]
+        start = [(50, 100), (50, 150), (75, 125)]
         end = list(map(lambda coords: (coords[0]+500, coords[1]), start))
         return [[x,y] for x,y in zip(start, end)]
 

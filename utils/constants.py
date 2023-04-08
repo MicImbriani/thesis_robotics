@@ -1,7 +1,5 @@
 print_flag = False
 
-training_speed = 10
-
 
 STRAIGHT =      {"coord": (0, 0),   "name": "STRAIGHT"}
 UP =            {"coord":(0,-1),    "name": "UP"}

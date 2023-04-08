@@ -1,5 +1,6 @@
 import pygame
 from math import sqrt
+from statistics import variance
 from random import choice, uniform
 from time import time as get_seconds
 
@@ -15,10 +16,12 @@ from robots.learn_robot import LearnRobot
 
 
 class QLearn(Simulation):
-    def __init__(self, alpha, gamma, rho, nu):
+    def __init__(self, alpha, gamma, rho, nu, training_speed):
         self.setup_swarm()
         self.setup_simulation()
-        self.timer_step = 0.05 / training_speed
+        # Training
+        self.training_speed = training_speed
+        self.timer_step = 0.05 / self.training_speed
         self.timer = get_seconds() + self.timer_step
         # Q-learn params
         self.alpha = alpha
@@ -27,7 +30,9 @@ class QLearn(Simulation):
         self.nu = nu
 
         # Learning worlds info
-        self.total_formation_disruption = 0
+        self.tot_form_disr = 0
+        self.tot_traj_disr = 0
+        self.swarm.set_base_formation_area()
 
     def setup_swarm(self):
         # MAP
@@ -41,14 +46,6 @@ class QLearn(Simulation):
         self.swarm = LearnSwarm(
             [self.robot1, self.robot2, self.robot3])
 
-    def setup_simulation(self):
-        # TRAJECTORY/ FORMATION
-        self.formation = Formation(
-            "triangle", self.swarm.robots, self.swarm.ids)
-        self.swarm.set_formation(self.formation)
-        self.swarm.set_base_formation_area()
-        self.end_coord = self.swarm.get_end_mid_point(
-            self.formation.end_middle_coordinate)
 
 
     # The q-learning step
@@ -69,7 +66,7 @@ class QLearn(Simulation):
             possible_actions = robot.get_legal_actions()
             # (Explore vs Exploit)
             rand_rho = uniform(0, 1)
-            action =  STRAIGHT#choice(possible_actions)
+            action =  STRAIGHT if STRAIGHT in possible_actions and robot.is_on_track else choice(possible_actions)
             # if rand_rho < self.exploration_rho:
             #     action = choice(possible_actions)
             # else:
@@ -91,31 +88,32 @@ class QLearn(Simulation):
             # print(robot.q_table)
 
 
-    @property
-    def distances(self):
-        return self.formation.get_distances()
-
-
     def update(self, tick):
         sim_counter = 0
-        sim_iterations = 2000 / training_speed
+        sim_iterations = 2000 / self.training_speed
         while not check_stop_game() and sim_counter <= sim_iterations:
             # Update clock
-            dt = (pygame.time.get_ticks() - tick)/1000 * training_speed
+            dt = (pygame.time.get_ticks() - tick)/1000 * self.training_speed
             tick = pygame.time.get_ticks()
 
             # Update map
             self.gfx.map.blit(self.gfx.map_img, (0, 0))
 
             # ---------------------- Main ----------------------
+            # Q-LEARN
             if get_seconds() >= self.timer:
                 self.q_learning(dt)
                 self.timer = get_seconds() + self.timer_step
+            # UPDATES
             self.swarm.update_swarm(dt)
             self.gfx.update()
             pygame.display.update()
+            # DISTANCES 
             self.formation.get_distances()
             sim_counter += 1
+            # FORMATION DISRUPTION
+            self.tot_form_disr += self.swarm.formation_disruption
+
 
 
     def run(self):
@@ -142,8 +140,13 @@ class QLearn(Simulation):
         
         self.update(tick)
 
+        # TOTAL TRAJECTORY DISRUPTION FOR EACH ROBOT
+        traj_disrs = []
         for robot in self.swarm.robots:
-            print(robot.trajectory.compute_total_disruption_area(robot.history))
+             traj_disrs.append(robot.trajectory.compute_total_traj_disruption(robot.history))
+        self.tot_traj_disr = variance(traj_disrs)
+
+
 
 
     def get_Q_tables(self):
@@ -158,7 +161,5 @@ class QLearn(Simulation):
 
 
     # WORLDS EXCHANGE
-
-    def compute_world_score(self):
-        return
-
+    def compute_world_score(self, discount1, discount2):
+        return self.tot_form_disr * discount1, self.tot_traj_disr * discount2
