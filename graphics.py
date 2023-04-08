@@ -34,7 +34,13 @@ class Graphics:
         self.map.blit(rotated, rect)    
 
     def update_senors(self, robot):
-        if robot.name == "DistanceRobot" or robot.name == "LearnRobot":
+        if robot.name == "DistanceRobot":
+            return
+        if robot.name == "LearnRobot":
+            # RANGE OF SPACING FOR LEARN ROBOTS
+            # pygame.draw.circle(self.map, get_color("red"), robot.position, 55, 1)
+            # pygame.draw.circle(self.map, get_color("red"), robot.position, 60, 1)
+            # pygame.draw.circle(self.map, get_color("red"), robot.position, 50, 1)
             return
         for ray in robot.sensors_rays:
             if ray == [sys.maxsize, sys.maxsize]:
@@ -43,6 +49,8 @@ class Graphics:
             pygame.draw.line(self.map, get_color("red"), robot.position, ray)
             pygame.draw.circle(self.map, get_color("yellow"),
                                robot.position, sensor_dist, 1)
+
+
 
     def draw_robot_path(self, robot):
         for point in robot.path:

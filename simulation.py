@@ -28,7 +28,7 @@ class Simulation:
         # ROBOTS
         self.robot1 = DistanceRobot(self.map)
         self.robot2 = Robot(self.map)
-        self.robot3 = LearnRobot(self.map)
+        self.robot3 = DistanceRobot(self.map)
         # self.robot4 = DistanceRobot(self.map)
         self.swarm = Swarm(
             [self.robot1, self.robot2, self.robot3])

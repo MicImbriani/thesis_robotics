@@ -1,3 +1,7 @@
+from math import sqrt
+
+from utils.utils import distance
+
 class Swarm:
     def __init__(self, swarm):
         self.robots = swarm
@@ -35,9 +39,24 @@ class Swarm:
 class LearnSwarm(Swarm):
     def __init__(self, swarm):
         super().__init__(swarm)
+        self.base_formation_area = 0.  #value is assigned during q-learning init
+
+    # WORLDS EXCHANGE
+
+    # HARDCODED TO 3 ROBOTS ONLY
+    def compute_triangle_area(self, p1, p2, p3):
+        l1 = distance(p1, p2)
+        l2 = distance(p2, p3)
+        l3 = distance(p1, p3)
+        s = (l1 + l2 + l3) / 2
+        return sqrt(s * (s-l1)*(s-l2)*(s-l3))
+
+    @property
+    def formation_disruption(self):
+        r1, r2, r3 = [robot.position for robot in self.robots]
+        return abs(self.compute_triangle_area(r1, r2, r3) - self.base_formation_area)
 
 
-    def get_states(self):
-        states = []
-        for robot in self.robots:
-            states.append(robot.get_state())
+    def set_base_formation_area(self):
+        r1, r2, r3 = [robot[0] for robot in self.formation]
+        self.base_formation_area= self.compute_triangle_area(r1, r2, r3)

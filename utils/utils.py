@@ -43,7 +43,6 @@ def get_color(color):
 
 
 from utils.constants import *
-
 def get_direction_from_heading(heading) -> dict:
     if ((heading == 0)      # RIGHT
         or (0 < heading <= 0.39269908169872414) \
@@ -131,6 +130,7 @@ def connect(ends):
 
 def connect2(ends):
     d0, d1 = np.diff(ends, axis=0)[0]
+    print("DDD", d0, d1)
     if np.abs(d0) > np.abs(d1): 
         return np.c_[np.arange(ends[0, 0], ends[1,0] + np.sign(d0), np.sign(d0), dtype=np.int32),
                      np.arange(ends[0, 1] * np.abs(d0) + np.abs(d0)//2,

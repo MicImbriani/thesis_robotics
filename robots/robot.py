@@ -92,7 +92,7 @@ class Robot:
         return self.sensor.sense_obstacles(self.x, self.y, self.heading)
 
     def update(self, dt):
-        sensor_rays, collisions = self._sense_obstacles()
-        self.compute_wheel_vel(sensor_rays, collisions)
+        self.sensors_rays, collisions = self._sense_obstacles()
+        self.compute_wheel_vel(self.sensors_rays, collisions)
         self.kinematics(dt)
         self.store_distances()

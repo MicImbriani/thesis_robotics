@@ -1,31 +1,33 @@
 import pygame
+from math import sqrt
 from random import choice, uniform
 from time import time as get_seconds
 
 from utils.constants import *
 from utils.dimensions import *
-from utils.qlearn_utils import get_spacing_from_dist, save_policy
+from utils.utils import distance
 from utils.simulation_utils import check_stop_game
-from utils.counter import Counter
 
-from state import State
-from simulation import Simulation
-from robots.learn_robot import LearnRobot
-from robots.swarm import Swarm
-from graphics import Graphics
 from formation import Formation
+from simulation import Simulation
+from robots.swarm import LearnSwarm
+from robots.learn_robot import LearnRobot
 
 
 class QLearn(Simulation):
     def __init__(self, alpha, gamma, rho, nu):
-        super().__init__()
-        self.timer_step = 0.2
+        self.setup_swarm()
+        self.setup_simulation()
+        self.timer_step = 0.05 / training_speed
         self.timer = get_seconds() + self.timer_step
         # Q-learn params
         self.alpha = alpha
         self.gamma = gamma
         self.exploration_rho = rho
         self.nu = nu
+
+        # Learning worlds info
+        self.total_formation_disruption = 0
 
     def setup_swarm(self):
         # MAP
@@ -36,8 +38,17 @@ class QLearn(Simulation):
         self.robot2 = LearnRobot(self.map)
         self.robot3 = LearnRobot(self.map)
         # self.robot4 = DistanceRobot(self.map)
-        self.swarm = Swarm(
+        self.swarm = LearnSwarm(
             [self.robot1, self.robot2, self.robot3])
+
+    def setup_simulation(self):
+        # TRAJECTORY/ FORMATION
+        self.formation = Formation(
+            "triangle", self.swarm.robots, self.swarm.ids)
+        self.swarm.set_formation(self.formation)
+        self.swarm.set_base_formation_area()
+        self.end_coord = self.swarm.get_end_mid_point(
+            self.formation.end_middle_coordinate)
 
 
     # The q-learning step
@@ -50,17 +61,15 @@ class QLearn(Simulation):
         # if rand_nu < self.nu or state is None:
         #     state = problem.getRandomState()
 
-        for robot in self.swarm:
+        for robot in self.swarm.robots:
             state = robot.last_state
-            if robot.id == 0:
-                print("STATE", state)
             # if state is None:
             #     state = robot.get_state()
             # Get all possible actions
             possible_actions = robot.get_legal_actions()
             # (Explore vs Exploit)
             rand_rho = uniform(0, 1)
-            action = choice(possible_actions)
+            action =  STRAIGHT#choice(possible_actions)
             # if rand_rho < self.exploration_rho:
             #     action = choice(possible_actions)
             # else:
@@ -89,10 +98,10 @@ class QLearn(Simulation):
 
     def update(self, tick):
         sim_counter = 0
-        sim_iterations = 1000
+        sim_iterations = 2000 / training_speed
         while not check_stop_game() and sim_counter <= sim_iterations:
             # Update clock
-            dt = (pygame.time.get_ticks() - tick)/1000
+            dt = (pygame.time.get_ticks() - tick)/1000 * training_speed
             tick = pygame.time.get_ticks()
 
             # Update map
@@ -107,13 +116,12 @@ class QLearn(Simulation):
             pygame.display.update()
             self.formation.get_distances()
             sim_counter += 1
-            print(sim_counter)
 
 
     def run(self):
         tick = pygame.time.get_ticks()
 
-        for robot in self.swarm:
+        for robot in self.swarm.robots:
             robot.init_state()
 
 
@@ -133,5 +141,24 @@ class QLearn(Simulation):
         self.formation.get_distances()
         
         self.update(tick)
-        
+
+        for robot in self.swarm.robots:
+            print(robot.trajectory.compute_total_disruption_area(robot.history))
+
+
+    def get_Q_tables(self):
+        return [robot.q_table for robot in self.swarm.robots]
+
+
+    def set_Q_tables(self, q_tables):
+        for robot, q_table in zip(self.swarm.robots, q_tables):
+            robot.q_table = q_table
+
+
+
+
+    # WORLDS EXCHANGE
+
+    def compute_world_score(self):
+        return
 

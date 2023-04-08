@@ -1,5 +1,6 @@
 print_flag = False
 
+training_speed = 10
 
 
 STRAIGHT =      {"coord": (0, 0),   "name": "STRAIGHT"}
@@ -28,3 +29,8 @@ ACCELERATE = 1
 DECELERATE = -1
 
 ALL_ACTIONS = [LEFT, RIGHT, STRAIGHT, ACCELERATE, DECELERATE]
+
+
+IN_RANGE = "IN RANGE"
+TOO_FAR = "TOO FAR"
+TOO_CLOSE = "TOO CLOSE"

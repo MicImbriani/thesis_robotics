@@ -4,7 +4,7 @@ from math import cos, sin, pi
 from utils.constants import *
 from utils.counter import Counter
 from utils.utils import get_direction_from_dir, get_direction_from_heading, get_relative_directions, get_heading_from_direction
-from utils.qlearn_utils import in_correct_direction, get_spacing_from_dist
+from utils.qlearn_utils import get_spacing_from_dist
 
 from state import State
 from .robot import Robot
@@ -27,6 +27,8 @@ class LearnRobot(Robot):
         self.last_state = []
         self.last_action = []
         self.current_dists = {}
+        self.discount_factor = 0.8
+        self.discounted_total_rewards = 0
 
     def init_state(self):
         self.state = State(self, self.other_robots)
@@ -182,23 +184,23 @@ class LearnRobot(Robot):
         return self.q_table[str([state, action])]
     
     def compute_reward(self, current_distances, dist_to_endpoint):
-        # 1) distance error between robot and r1
-        # 2) distance error between robot and r2
-        # 3) distance to end goal
-        dists = list(current_distances.values())
-        dist_r1 = dists[0]
-        dist_r2 = dists[1]
-        return dist_r1 + dist_r2 + dist_to_endpoint
-    
+        # Distance to end goal. Closer -> more points
+        reward = - dist_to_endpoint * 100
+        # Reward if robots stay in range of each other,
+        # penalize if too far or too close
+        spacings = list(get_spacing_from_dist(current_distances).values())
+        for robot_spacing in spacings:
+            if robot_spacing == TOO_FAR or robot_spacing == TOO_CLOSE:
+                reward -= 10
+            elif robot_spacing == IN_RANGE:
+                reward += 100
+            else:
+                raise Exception("Error when converting distances to spacing. Returned value is not TOO_FAR, TOO_CLOSE or IN_RANGE")
+        # Penalize every second to encourage faster solutions
+        reward -= 5
+        self._update_discounted_total_rewards(reward)
+        return reward
 
-    # Called as the last iteration
-    def on_end(self, score):
-        # Update Q-values.
-        reward = score - self.old_score
-        last_state = self.last_state[-1]
-        last_action = self.last_action[-1]
-        self._update_Q(last_state, last_action, reward, 0)
-        # Reset attributes.
-        self.old_score = 0
-        self.lastState = []
-        self.lastAction = []
+
+    def _update_discounted_total_rewards(self, reward):
+        self.discounted_total_rewards += self.discount_factor * reward

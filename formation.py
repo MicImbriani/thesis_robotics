@@ -1,18 +1,31 @@
-from utils.utils import connect2, distance
 from copy import copy
+from numpy import array, sort, where
+from scipy import integrate
+from sklearn.metrics import auc
+
+from utils.utils import connect, distance
 
 class Trajectory:
     def __init__(self, coords):
         self.start = coords[0]
         self.end = coords[1]
-        
+        self.line = connect(array([[self.start[0], self.start[1]],
+                                    [self.end[0], self.end[1]]]))
 
-    @property
-    def coord(self):
-        return (self.start, self.end)
-    
-    def _set_traj_coords(self):
-        points = connect2(self.start, self.end)
+
+    # Calculate at the end of train episode
+    def compute_total_traj_disruption(self, robot_history):
+        robot_history = array(robot_history)
+        robot_history_sorted = robot_history[robot_history[:, 1].argsort()]
+        x_robot = []
+        y_robot = []
+        for point in robot_history_sorted:
+            if point[0] == 0 and point[1]==0: continue
+            x_robot.append(point[0] - self.start[0])
+            y_robot.append(-1*(point[1] - self.start[1]))
+
+        robot_area = integrate.trapz(x=x_robot, y=y_robot)
+        return robot_area
 
 
 
@@ -24,6 +37,8 @@ class Formation:
             case "triangle":    self.formation = self._triangle_formation()
             case "line":        self.formation = self._line_formation()
             case "square":        self.formation = self._square_formation()
+        # self.formation final look:
+        #  [[(200, 100), (700, 100)], [(250, 100), (750, 100)], [(225, 150), (725, 150)]]
         self.end_middle_coordinate = self._compute_end_point()
         self.dists = {}
         self.assign_trajs()
