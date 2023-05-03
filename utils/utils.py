@@ -29,15 +29,24 @@ def _ro_ij(robot1, robot2, K, distance):
     return ro
 
 
-# COLORS
+# # COLORS
+# def get_color2(color):
+#     match color:
+#         case "black": return (0, 0, 0)
+#         case "white": return (255, 255, 255)
+#         case "green": return (0, 255, 0)
+#         case "blue": return (0, 0, 255)
+#         case "red": return (255, 0, 0)
+#         case "yellow": return (255, 255, 0)
+
+
 def get_color(color):
-    match color:
-        case "black"    : return (0,0,0)
-        case "white"    : return (255,255,255)
-        case "green"    : return (0,255,0)
-        case "blue"     : return (0,0,255)
-        case "red"      : return (255,0,0)
-        case "yellow"   : return (255,255,0)
+    if color == "black": return (0, 0, 0)
+    elif color == "white": return (255, 255, 255)
+    elif color == "green": return (0, 255, 0)
+    elif color == "blue": return (0, 0, 255)
+    elif color == "red": return (255, 0, 0)
+    elif color == "yellow": return (255, 255, 0)
 
 
 
@@ -75,17 +84,29 @@ def get_direction_from_heading(heading) -> dict:
         raise Exception("NO DIRECTION FOUND FROM HEADING")
 
 
+# def get_direction_from_dir(dir):
+#     match dir:
+#         case (0, 0): return STRAIGHT
+#         case (0, -1): return UP
+#         case (1, -1): return UP_RIGHT
+#         case (1, 0): return RIGHT
+#         case (1, 1): return DOWN_RIGHT
+#         case (0, 1): return DOWN
+#         case (-1, 1): return DOWN_LEFT
+#         case (-1, 0): return LEFT
+#         case (-1, -1): return UP_LEFT
+
+
 def get_direction_from_dir(dir):
-    match dir:
-        case (0,0): return STRAIGHT
-        case (0, -1): return UP
-        case (1,-1): return UP_RIGHT
-        case (1,0): return RIGHT
-        case (1,1): return DOWN_RIGHT
-        case (0,1): return DOWN
-        case (-1,1): return DOWN_LEFT
-        case (-1,0): return LEFT
-        case (-1,-1): return UP_LEFT
+    if dir ==  (0, 0): return STRAIGHT
+    elif dir ==  (0, -1): return UP
+    elif dir ==  (1, -1): return UP_RIGHT
+    elif dir ==  (1, 0): return RIGHT
+    elif dir ==  (1, 1): return DOWN_RIGHT
+    elif dir ==  (0, 1): return DOWN
+    elif dir ==  (-1, 1): return DOWN_LEFT
+    elif dir ==  (-1, 0): return LEFT
+    elif dir ==  (-1, -1): return UP_LEFT
 
 relative_directions = [UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT]
 def get_relative_directions(current_dir, new_dir):
@@ -99,17 +120,29 @@ def get_relative_directions(current_dir, new_dir):
         return relative_directions[id_right]
 
 
+# def get_heading_from_direction(dir):
+#     match dir:
+#         case (0, 0): return 0
+#         case (0, -1): return 1.57
+#         case (1, -1): return 0.785
+#         case (1, 0): return 0
+#         case (1, 1): return 5.495
+#         case (0, 1): return 4.71
+#         case (-1, 1): return 3.925
+#         case (-1, 0): return 3.14
+#         case (-1, -1): return 2.355
+    
+
 def get_heading_from_direction(dir):
-    match dir:
-        case (0, 0): return 0
-        case (0, -1): return 1.57
-        case (1, -1): return 0.785
-        case (1, 0): return 0
-        case (1, 1): return 5.495
-        case (0, 1): return 4.71
-        case (-1, 1): return 3.925
-        case (-1, 0): return 3.14
-        case (-1, -1): return 2.355
+    if dir ==  (0, 0): return 0
+    elif dir ==  (0, -1): return 1.57
+    elif dir ==  (1, -1): return 0.785
+    elif dir ==  (1, 0): return 0
+    elif dir ==  (1, 1): return 5.495
+    elif dir ==  (0, 1): return 4.71
+    elif dir ==  (-1, 1): return 3.925
+    elif dir ==  (-1, 0): return 3.14
+    elif dir ==  (-1, -1): return 2.355
 
 
 
