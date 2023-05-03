@@ -33,10 +33,9 @@ class Formation:
     def __init__(self, name, robots, ids):
         self.robots = robots
         self.ids = ids
-        match name:
-            case "triangle":    self.formation = self._triangle_formation()
-            case "line":        self.formation = self._line_formation()
-            case "square":        self.formation = self._square_formation()
+        if name ==  "triangle":    self.formation = self._triangle_formation()
+        elif name ==  "line":        self.formation = self._line_formation()
+        elif name ==  "square":        self.formation = self._square_formation()
         # self.formation final look:
         #  [[(200, 100), (700, 100)], [(250, 100), (750, 100)], [(225, 150), (725, 150)]]
         self.end_middle_coordinate = self._compute_end_point()
