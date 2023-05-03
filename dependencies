@@ -1,0 +1,5 @@
+DEPENDENCIES 
+pygame
+numpy scipy
+scikit-learn
+matplotlib
