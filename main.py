@@ -1,3 +1,4 @@
+import os
 import pickle
 import argparse
 from copy import deepcopy
@@ -12,9 +13,11 @@ from simulation import Simulation
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--version", help="Version of the simulation", type=int)
 parser.add_argument("-d", "--demo", help="Demo", action='store_true', default=False)
+parser.add_argument("--headless", help="Whether to create and show display", action='store_true', default=False)
 args = parser.parse_args()
 
-
+if args.headless:
+    os.environ["SDL_VIDEODRIVER"] = "dummy"
 
 
 # Q-LEARNING 
@@ -136,7 +139,7 @@ if __name__ == "__main__" and PROGRESS == 2:
         previous_Q_tables = [[] for _ in range(learning_worlds)]
         iter_counter = 0
         info_exch_counter = 0
-        for i in range(5):
+        for i in range(train_iterations):
             print(f"Iterations {i}")
             iter_counter += 1
             # Stup and run all learning worlds in parallel
