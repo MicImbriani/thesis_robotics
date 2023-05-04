@@ -66,7 +66,8 @@ class QLearn(Simulation):
             possible_actions = robot.get_legal_actions()
             # (Explore vs Exploit)
             rand_rho = uniform(0, 1)
-            action =  STRAIGHT if STRAIGHT in possible_actions and robot.is_on_track else choice(possible_actions)
+            # action =  STRAIGHT if STRAIGHT in possible_actions and robot.is_on_track else choice(possible_actions)
+            action =  choice(possible_actions)
             # if rand_rho < self.exploration_rho:
             #     action = choice(possible_actions)
             # else:

@@ -12,6 +12,7 @@ def load_policy(sim, file):
     fr = open(file, 'rb')
     sim.set_Q_tables(pickle.load(fr))
     fr.close()
+    return sim.get_Q_tables()
 
 
 
