@@ -23,7 +23,7 @@ class DistanceRobot(Robot):
 
         if print_flag: print("SPEEEED", self.speedL, self.speedR)
 
-    def get_velocity(self) -> tuple[float,float]:
+    def get_velocity(self):
         tot_x = 0
         tot_y = 0
         for neigh in self.other_robots:
