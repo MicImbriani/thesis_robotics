@@ -37,10 +37,13 @@ class Graphics:
         if robot.name == "DistanceRobot":
             return
         if robot.name == "LearnRobot":
+            if robot.id != 0:
+                return
             # RANGE OF SPACING FOR LEARN ROBOTS
+            pygame.draw.circle(self.map, get_color("red"), robot.position, collision_distance, 1)
             # pygame.draw.circle(self.map, get_color("red"), robot.position, 55, 1)
-            # pygame.draw.circle(self.map, get_color("red"), robot.position, 60, 1)
-            # pygame.draw.circle(self.map, get_color("red"), robot.position, 50, 1)
+            pygame.draw.circle(self.map, get_color("red"), robot.position, 35, 1)
+            pygame.draw.circle(self.map, get_color("red"), robot.position, 65, 1)
             return
         for ray in robot.sensors_rays:
             if ray == [sys.maxsize, sys.maxsize]:

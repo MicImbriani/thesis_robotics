@@ -1,0 +1,1 @@
+5 total iterations,INFO EXCHANGED {info_exch_counter} TIMES.

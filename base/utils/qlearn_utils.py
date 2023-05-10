@@ -1,9 +1,22 @@
 import pickle
+import matplotlib.pyplot as plt
+from statistics import mean
+from utils.simulation_utils import get_distance_errors_log
 # Saves the Q-table.
 
+sim_duration = 1500
 
-def save_policy(previous_Q_tables):
-    fw = open('trained_controller', 'wb')
+
+def save_element(previous_Q_tables, file_name):
+    file_name = 'trained_controller'
+    fw = open(file_name, 'wb')
+    pickle.dump(previous_Q_tables, fw)
+    fw.close()
+
+
+def save_rewards(previous_Q_tables):
+    file_name = 'trained_controller'
+    fw = open(file_name, 'wb')
     pickle.dump(previous_Q_tables, fw)
     fw.close()
 
@@ -13,6 +26,33 @@ def load_policy(sim, file):
     sim.set_Q_tables(pickle.load(fr))
     fr.close()
     return sim.get_Q_tables()
+
+def make_plots(swarm, formation):
+    distances = formation.dists
+    distances_log = get_distances_log(swarm)
+    r01 = distances_log[0][1]
+    r02 = distances_log[0][2]
+    r12 = distances_log[1][2]
+    length = len(r01)
+    fig = plt.figure()
+    ax = fig.add_subplot(1, 1, 1)
+    ax.plot(range(length), [val-distances[(0, 1)] for val in r01], color='tab:blue')
+    ax.plot(range(length), [val-distances[(0, 2)] for val in r02], color='tab:green')
+    ax.plot(range(length), [val-distances[(1, 2)] for val in r12], color='tab:red')
+    plt.savefig("../lol.png")
+
+
+def store_distances_logs(distances, swarm):
+    distances_log = get_distance_errors_log(swarm)
+    r01 = distances_log[0][1]
+    r02 = distances_log[0][2]
+    r12 = distances_log[1][2]
+    avgs = []
+    for log in [r01, r02, r12]:
+        dist_in_one_iter = [val for val in log]
+        avgs.append(mean(dist_in_one_iter))
+    return avgs
+
 
 
 
@@ -24,11 +64,11 @@ def get_spacing_from_dist(dists: dict) -> dict:
     each other robot in the system
     """
     def is_in_range(dist):
-        ideal_dist = 55
+        ideal_dist = 50
         dist = ideal_dist-dist # 55 - 40 15
-        if dist >= 5:
+        if dist >= 15:
             return TOO_CLOSE
-        elif dist <= -5:
+        elif dist <= -15:
             return TOO_FAR
         else:
             return IN_RANGE

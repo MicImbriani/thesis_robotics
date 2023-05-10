@@ -64,7 +64,6 @@ class Counter(dict):
         if len(self.keys()) == 0:
             return None
         all = list(self.items())
-        print(all)
         values = [x[1] for x in all]
         maxIndex = values.index(max(values))
         return all[maxIndex][0]

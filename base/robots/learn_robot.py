@@ -1,3 +1,4 @@
+from random import choice
 from numpy import array, add
 from math import cos, sin, pi
 
@@ -17,7 +18,7 @@ class LearnRobot(Robot):
         _, self.collisions = self._sense_obstacles()
         # MOVEMENT SPEEDS
         self.max_speed = 50
-        self.min_speed = 10
+        self.min_speed = -10
         self.acc_increment = 10
         self.dec_increment = 10
 
@@ -190,19 +191,21 @@ class LearnRobot(Robot):
     
     def compute_reward(self, current_distances, dist_to_endpoint):
         # Distance to end goal. Closer -> more points
-        reward = - dist_to_endpoint * 100
+        reward = - dist_to_endpoint 
         # Reward if robots stay in range of each other,
         # penalize if too far or too close
         spacings = list(get_spacing_from_dist(current_distances).values())
         for robot_spacing in spacings:
-            if robot_spacing == TOO_FAR or robot_spacing == TOO_CLOSE:
+            if robot_spacing == TOO_FAR:
                 reward -= 10
+            elif robot_spacing == TOO_CLOSE:
+                reward -= 1
             elif robot_spacing == IN_RANGE:
                 reward += 100
             else:
                 raise Exception("Error when converting distances to spacing. Returned value is not TOO_FAR, TOO_CLOSE or IN_RANGE")
         # Penalize every second to encourage faster solutions
-        reward -= 5
+        reward -= 1
         self._update_discounted_total_rewards(reward)
         return reward
 

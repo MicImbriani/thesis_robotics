@@ -70,5 +70,3 @@ class Simulation:
                 robot.init_state()
 
         self.update(tick)
-
-        # make_plots(self.formation, self.swarm.robots)

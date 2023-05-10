@@ -31,6 +31,16 @@ def get_distances_log(swarm):
         final[robot.id] = robot.distances_log
     return final
 
+from utils.dimensions import ideal_dist
+def get_distance_errors_log(swarm):
+    final = {}
+    for robot in swarm:
+        temp_dict = {}
+        for other_robot_k, other_robot_v in robot.distances_log.items():
+            temp_dict[other_robot_k] = list(map(lambda x: abs(x-ideal_dist), other_robot_v))
+        final[robot.id] = temp_dict
+    return final
+
 import pygame
 def check_stop_game():
     """Returns true if game needs to be stopped. """

@@ -42,9 +42,9 @@ class Formation:
         self.dists = {}
         self.assign_trajs()
         self.assign_dists()
-    
+
     def _triangle_formation(self):
-        start = [(50, 100), (50, 150), (75, 125)]
+        start = [(50, 100), (50, 150), (93, 125)]
         end = list(map(lambda coords: (coords[0]+500, coords[1]), start))
         return [[x,y] for x,y in zip(start, end)]
 

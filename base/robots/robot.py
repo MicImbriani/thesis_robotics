@@ -54,7 +54,7 @@ class Robot:
     def avoid_obstacles(self, sensors, collisions):
         correction = list(map(lambda x: ray_distance(x, self.position, self.min_obstalce_distance), sensors))
         l2, l1, m, r1, r2 = correction
-        correction = l2 + 2*l1 + 8.5*m - 2*r1 - r2
+        correction = 2*l2+10 + 5*l1+10 + 10*m - 5*r1 - r2*2
         correction = correction / 100000
         left_collide, mid_collide, right_collide = self.prevent_collision(collisions)
         left_wheel_velocity = self.minspeed + correction if not left_collide else 0

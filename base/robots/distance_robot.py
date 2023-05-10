@@ -21,7 +21,6 @@ class DistanceRobot(Robot):
         self.speedL = v_star[0] 
         self.speedR = v_star[1]
 
-        if print_flag: print("SPEEEED", self.speedL, self.speedR)
 
     def get_velocity(self):
         tot_x = 0
