@@ -31,8 +31,9 @@ class Ultrasonic:
                     # For each ray, check if it is colliding with something
                     if i <= collision_distance:
                         collision_color = self.map.get_at((x, y))
-                        collision[id] = True if (collision_color[0], collision_color[1], collision_color[2]) == get_color(
-                            "black") else False
+                        collision[id] = True if (collision_color[0],
+                                                 collision_color[1],
+                                                 collision_color[2]) == get_color("black") else False
                     # Normal distance
                     color = self.map.get_at((x,y))
                     self.map.set_at((x,y), (0,208,255))

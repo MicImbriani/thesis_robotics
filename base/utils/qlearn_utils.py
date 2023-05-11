@@ -7,17 +7,9 @@ from utils.simulation_utils import get_distance_errors_log
 sim_duration = 1500
 
 
-def save_element(previous_Q_tables, file_name):
-    file_name = 'trained_controller'
+def save_element(element, file_name):
     fw = open(file_name, 'wb')
-    pickle.dump(previous_Q_tables, fw)
-    fw.close()
-
-
-def save_rewards(previous_Q_tables):
-    file_name = 'trained_controller'
-    fw = open(file_name, 'wb')
-    pickle.dump(previous_Q_tables, fw)
+    pickle.dump(element, fw)
     fw.close()
 
 # Loads a Q-table.

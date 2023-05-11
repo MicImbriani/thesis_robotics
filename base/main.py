@@ -24,7 +24,7 @@ if args.headless:
 
 # Q-LEARNING 
 Q_LEARN = True
-training_speed = 5
+training_speed = 1
 sim_duration = sim_duration
 
 # Parameters
@@ -245,7 +245,7 @@ if __name__ == "__main__" and PROGRESS == 2:
         # ON END
         with open("test_output.txt", "w") as myfile:
             myfile.write(f"{iter_counter} total iterations,"
-                         "INFO EXCHANGED {info_exch_counter} TIMES.")
+                         f"INFO EXCHANGED {info_exch_counter} TIMES.")
 
         print("LOGS", all_dists_logs)
         print("REWARDS", tot_avg_rewards)
