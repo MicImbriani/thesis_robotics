@@ -49,8 +49,8 @@ class LearnSwarm(Swarm):
         l2 = distance(p2, p3)
         l3 = distance(p1, p3)
         s = (l1 + l2 + l3) / 2
-        return sqrt(s * (s-l1)*(s-l2)*(s-l3))
-
+        return sqrt(abs(s * (s-l1)*(s-l2)*(s-l3)))
+        
     @property
     def formation_disruption(self):
         r1, r2, r3 = [robot.position for robot in self.robots]

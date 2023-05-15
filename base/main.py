@@ -1,6 +1,7 @@
 import os
 import pickle
 import argparse
+from random import choice
 from copy import deepcopy
 from statistics import mean
 from numpy import array,argsort
@@ -11,7 +12,7 @@ from utils.qlearn_utils import save_element, load_policy, make_plots, \
 
 from q_learn import QLearn
 from simulation import Simulation
-
+import time
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--version", help="Version of the simulation", type=int)
 parser.add_argument("-d", "--demo", help="Demo", action='store_true', default=False)
@@ -24,7 +25,7 @@ if args.headless:
 
 # Q-LEARNING 
 Q_LEARN = True
-training_speed = 1
+training_speed = 10
 sim_duration = sim_duration
 
 # Parameters
@@ -35,7 +36,7 @@ walk_len_nu = 0.2
 train_iterations = 1000
 
 # MULTI-VERSE
-learning_worlds = 100
+learning_worlds = 1
 formation_discount = 0.9
 trajectory_discount = 0.7
 
@@ -167,6 +168,7 @@ if __name__ == "__main__" and PROGRESS == 2:
             dists_avgs = store_distances_logs(my_sim.formation.dists,
                                          my_sim.swarm.robots)
 
+            time.sleep(5)
             # Reset
             del my_sim
             return formation_disr, traj_disr, tables, rewards, dists_avgs
@@ -215,7 +217,6 @@ if __name__ == "__main__" and PROGRESS == 2:
                 world_list.insert(0, idx)
                 all_world_scores.append(world_list)
 
-
             all_world_scores_copy = deepcopy([x[:3] for x in all_world_scores])
             array_all_world_scores = array(all_world_scores_copy)
             sort_by_form = array_all_world_scores[array_all_world_scores[:, 1].argsort()].tolist()
@@ -242,27 +243,28 @@ if __name__ == "__main__" and PROGRESS == 2:
                 save_element(all_dists_logs, 'all_dists_logs')
                 save_element(info_exch_counter, 'info_exch_counter')
 
-        # ON END
-        with open("test_output.txt", "w") as myfile:
-            myfile.write(f"{iter_counter} total iterations,"
-                         f"INFO EXCHANGED {info_exch_counter} TIMES.")
+            # ON END
+            with open("test_output.txt", "a") as myfile:
+                myfile.write(f"{iter_counter} total iterations,"
+                            f"INFO EXCHANGED {info_exch_counter} TIMES.")
 
         print("LOGS", all_dists_logs)
         print("REWARDS", tot_avg_rewards)
-
-
         print("INFO EXCHANGED: ", info_exch_counter)
 
 
 if __name__ == "__main__" and PROGRESS == -1:
     fr = open('trained_controller', 'rb')
     q_tables = pickle.load(fr)
+    ALL = False
+    if not ALL:
+        q_tables = [choice(q_tables)]
+        print(len(q_tables))
     for world_q_tables in q_tables:
         # Setup
         my_sim = QLearn(alpha=0, gamma=discount_rate_gamma,
-                        rho=0, nu=walk_len_nu, training_speed=5)
+                        rho=0, nu=walk_len_nu, training_speed=1)
         # Load Q-tables
         my_sim.set_Q_tables(world_q_tables)
         # Start
         my_sim.run()
-

@@ -1,7 +1,7 @@
+import numpy as np
 from copy import copy
-from numpy import array, sort, where
-from scipy import integrate
-from sklearn.metrics import auc
+from numpy import array
+from numpy import trapz
 
 from utils.utils import connect, distance
 
@@ -23,9 +23,8 @@ class Trajectory:
             if point[0] == 0 and point[1]==0: continue
             x_robot.append(point[0] - self.start[0])
             y_robot.append(-1*(point[1] - self.start[1]))
-
-        robot_area = integrate.trapz(x=x_robot, y=y_robot)
-        return robot_area
+        robot_area = trapz(x=x_robot, y=y_robot)
+        return abs(robot_area)
 
 
 

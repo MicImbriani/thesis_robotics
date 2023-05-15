@@ -13,9 +13,9 @@ class State:
         [my heading
         going towards goal
         robot2 spacing
-        robot2 heading
+        robot2 direction relative to robot
         robot3 spacing
-        robot3 heading]
+        robot3 direction relative to robot]
         """
         r1, r2 = self.other_robots
         spacings = get_spacing_from_dist(current_distances)

@@ -88,8 +88,7 @@ class QLearn(Simulation):
             # Update Q-table
             Q = robot.get_Q_value(state, action)
             maxQ = robot.get_max_Q(new_state, ALL_ACTIONS)
-            new_Q = (1 - self.alpha) * Q + self.alpha * \
-                (reward + self.gamma * maxQ - Q)
+            new_Q = Q + self.alpha * (reward + self.gamma * maxQ - Q)
             robot.update_Q(state, action, new_Q)
 
             # Set state for next iteration
