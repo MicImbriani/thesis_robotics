@@ -31,6 +31,7 @@ class QLearn(Simulation):
         self.exploration_rho = rho
         self.nu = nu
         self.total_rewards = 0
+        self.random_start = True
 
         # Learning worlds info
         self.tot_form_disr = 0
@@ -52,31 +53,33 @@ class QLearn(Simulation):
 
 
     # The q-learning step
-
     def q_learning(self, simcounter, sim_iterations):
         current_distances = self.formation.get_distances()
         dists_to_endpoint = self.formation.dist_to_end_poit()
 
         # rand_nu = uniform(0, 1)
-        # # TODO: maybe make method for computing state?
+        # # TODO: maybe make method for generating random state?
         # if rand_nu < self.nu or state is None:
         #     state = problem.getRandomState()
 
         for robot in self.swarm.robots:
             state = robot.last_state
-            # if state is None:
-            #     state = robot.get_state()
+            if state is None or state == []:
+                state = robot.state.get_current_state(current_distances[robot.id])
             # Get all possible actions
             possible_actions = robot.get_legal_actions()
             # (Explore vs Exploit)
             rand_rho = uniform(0, 1)
-            if simcounter <= sim_iterations/6:
-                action =  STRAIGHT if STRAIGHT in possible_actions and robot.is_on_track else choice(possible_actions)
-            # action =  choice(possible_actions)
+            if self.random_start:
+                action = choice(possible_actions)
+            elif simcounter <= sim_iterations/6:
+                action =  STRAIGHT
             elif rand_rho < self.exploration_rho:
                 action = choice(possible_actions)
             else:
                 action = robot.get_action(state, possible_actions)
+            # if robot.id == 0:
+            #     print(action)
 
             # Take action and get reward and next state
             robot.take_next_action(action)
@@ -121,8 +124,8 @@ class QLearn(Simulation):
             # FORMATION DISRUPTION
             self.tot_form_disr += self.swarm.formation_disruption
 
-
-    def run(self):
+    def run(self, random_start):
+        self.random_start = random_start
         tick = pygame.time.get_ticks()
 
         for robot in self.swarm.robots:
@@ -138,12 +141,12 @@ class QLearn(Simulation):
         self.gfx.map.blit(self.gfx.map_img, (0, 0))
 
         # ---------------------- Main ----------------------
-        self.q_learning(dt, 0)
+        # self.q_learning(dt, 0)
         self.swarm.update_swarm(dt)
         self.gfx.update()
         pygame.display.update()
         self.formation.get_distances()
-        
+
         self.update(tick)
 
         # TOTAL TRAJECTORY DISRUPTION FOR EACH ROBOT

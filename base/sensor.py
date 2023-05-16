@@ -36,7 +36,7 @@ class Ultrasonic:
                                                  collision_color[2]) == get_color("black") else False
                     # Normal distance
                     color = self.map.get_at((x,y))
-                    self.map.set_at((x,y), (0,208,255))
+                    self.map.set_at((x,y), (0,208,255)) # draw.line (the next line draws sensors)
                     if (color[0], color[1], color[2]) == get_color("black"):
                         obstacles[id] = [x,y]
                         break

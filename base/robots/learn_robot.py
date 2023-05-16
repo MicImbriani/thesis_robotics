@@ -22,7 +22,6 @@ class LearnRobot(Robot):
         self.acc_increment = 10
         self.dec_increment = 10
 
-
         # Q-LEARN
         self.q_table = Counter()
         self.last_state = []
@@ -33,10 +32,6 @@ class LearnRobot(Robot):
 
     def init_state(self):
         self.state = State(self, self.other_robots)
-
-    @property
-    def is_on_track(self):
-        return True if [int(self.position[0]), int(self.position[1])] in self.trajectory.line.tolist() else False
     
 
     ################ UPDATE ################
@@ -99,26 +94,27 @@ class LearnRobot(Robot):
 
 
     def get_legal_actions(self):
-        # Returns a list of legal actions
+        """GET LEGAL GLOBAL ACTIONS"""
+        new_collisions = self.collisions[4:] + self.collisions[:4]
+        # LOCAL_DIRECTIONS = [STRAIGHT, STRAIGHT_LEFT, LEFT, BEHIND_LEFT, BEHIND, BEHIND_RIGHT, RIGHT, STRAIGHT_RIGHT]
+        my_dir = get_direction_from_heading(self.heading)
+        dir_id = GLOBAL_DIRECTIONS.index(my_dir)
+        legal_actions = [DECELERATE]
+        for idx, action in enumerate(GLOBAL_DIRECTIONS):
+            if not new_collisions[idx - dir_id]:
+                legal_actions.append(action)
         # Accelerate and decellerate are always legal
-        right = self.collisions[0] and self.collisions[1]
-        left = self.collisions[3] and self.collisions[4]
-        mid = self.collisions[2]
-        acc_dec = [DECELERATE] if (right and left and mid) else [ACCELERATE, DECELERATE]
-        # Basically zips [LEFT, RIGHT, STRAIGHT] with [left sensors, right sensors, mid sensor]
-        return [action for action, obstacle_sensed in zip(ALL_ACTIONS[:3], [left, right, mid]) if not obstacle_sensed] + acc_dec
+        return legal_actions + [ACCELERATE] if STRAIGHT in legal_actions \
+            else legal_actions
 
 
     # Given list of possible actions and the current state, returns the best action
     def get_action(self, state, possible_actions):
-        state = state if not state is None else self.state.current_state
-
+        state = state if state is not None else self.state.current_state
         action = self.get_best_action(state, possible_actions)
-
         # Update attributes.
         self.last_state.append(state)
         self.last_action.append(action)
-        
         return action
 
 
@@ -135,25 +131,18 @@ class LearnRobot(Robot):
             self.accelerate()
         elif next_action == DECELERATE:
             self.decelerate()
+        elif next_action == STRAIGHT:
+            return # heading stays the same
         else:
-            relative_dir = self._get_new_direction(next_action)
             # HARDCODED HEADING CHANGE
-            self.heading = get_heading_from_direction(relative_dir)
+            self.heading = get_heading_from_direction(next_action)
 
 
-
-    def _get_new_direction(self, turn) -> dict:
-        """ 
-        Given the relative direction in which the robot should turn, 
-        computes the absolute direction in which the robot should go.
-        Thresholding the values is needed bcos all directions have max 
-        value of 1.
-        """
+    def _get_new_direction(self, next_action):
         relative_direction = get_relative_directions(
-            self.current_direction, turn)
+            self.current_direction, next_action)
         new_direction = add(array(self.current_direction),
                             array(relative_direction))
-
 
         def treshold(x):
             sign = 1 if x >= 0 else -1
@@ -187,11 +176,13 @@ class LearnRobot(Robot):
 
     # Return Q-value of a given state-action pair
     def get_Q_value(self, state, action):
+        if state == []:
+            return 0
         return self.q_table[str([state, action])]
     
     def compute_reward(self, current_distances, dist_to_endpoint):
         # Distance to end goal. Closer -> more points
-        reward = - dist_to_endpoint 
+        reward = 1/ dist_to_endpoint * 1000
         # Reward if robots stay in range of each other,
         # penalize if too far or too close
         spacings = list(get_spacing_from_dist(current_distances).values())

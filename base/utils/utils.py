@@ -82,6 +82,26 @@ def get_direction_from_heading(heading) -> dict:
         return DOWN_RIGHT
     else:
         raise Exception("NO DIRECTION FOUND FROM HEADING")
+    
+
+def get_direction_from_heading_4_dirs(heading) -> dict:
+    if ((heading == 0)      # RIGHT
+        or (0 < heading <= 0.785) \
+        or (5.495 < heading) \
+        or (heading <= -5.495) \
+            or (-0.785 < heading <= 0)):
+        return RIGHT
+    elif (0.785 < heading <= 2.355)\
+            or (-5.495 < heading <= -3.925):
+        return UP
+    elif (2.355 < heading <= 3.925)\
+            or (-3.5342917352885173 < heading <= -2.7488935718910694):
+        return LEFT
+    elif (3.925 < heading <= 5.495)\
+            or (-2.355 < heading <= -0.785):
+        return DOWN
+    else:
+        raise Exception("NO DIRECTION FOUND FROM HEADING")
 
 
 # def get_direction_from_dir(dir):
@@ -134,8 +154,8 @@ def get_relative_directions(current_dir, new_dir):
     
 
 def get_heading_from_direction(dir):
-    if dir ==  (0, 0): return 0
-    elif dir ==  (0, -1): return 1.57
+    # if dir ==  (0, 0): return 0
+    if dir ==  (0, -1): return 1.57
     elif dir ==  (1, -1): return 0.785
     elif dir ==  (1, 0): return 0
     elif dir ==  (1, 1): return 5.495

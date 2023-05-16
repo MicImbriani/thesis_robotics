@@ -40,7 +40,7 @@ class Graphics:
             if robot.id != 0:
                 return
             # RANGE OF SPACING FOR LEARN ROBOTS
-            pygame.draw.circle(self.map, get_color("red"), robot.position, collision_distance, 1)
+            pygame.draw.circle(self.map, get_color("blue"), robot.position, collision_distance, 1)
             # pygame.draw.circle(self.map, get_color("red"), robot.position, 55, 1)
             pygame.draw.circle(self.map, get_color("red"), robot.position, 35, 1)
             pygame.draw.circle(self.map, get_color("red"), robot.position, 65, 1)

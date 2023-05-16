@@ -80,19 +80,19 @@ def get_relative_pos_from_coords(point1, point2):
     return get_direction_from_heading(tang)
 
 
+from utils.utils import get_direction_from_heading_4_dirs
+def get_relative_pos_from_coords2(point1, point2):
+    a, b = point1
+    x, y = point2
+    tang = atan2(-(y-b), x-a)
+    return get_direction_from_heading_4_dirs(tang)
 
 
-from utils.utils import distance
-def _dist_to_goal(robot_position, final_coordinate):
-    return distance(robot_position, final_coordinate)
 
-
-# checks if the robot is traveling in the right direction
-def in_correct_direction(robot_path, final_coordinate):
-    if len(robot_path) <= 1:
-        return False
-    return True if _dist_to_goal(robot_path[-1], final_coordinate) < _dist_to_goal(robot_path[-2], final_coordinate) else False
-
+def in_correct_direction(robot_pos, robot_heading, final_coord):
+    robot_to_end_dir = get_relative_pos_from_coords2(robot_pos, final_coord)
+    return True if get_direction_from_heading_4_dirs(robot_heading) == robot_to_end_dir \
+        else False
 
 
 
@@ -101,3 +101,9 @@ def compute_discounted_total_rewards(swarm):
     for robot in swarm:
         count += robot.discounted_total_rewards
     return count
+
+
+from utils.constants import *
+
+GLOBAL_DIRECTIONS = [UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN_LEFT, LEFT, DOWN_LEFT]
+LOCAL_DIRECTIONS = [STRAIGHT, STRAIGHT_LEFT, LEFT, BEHIND_LEFT, BEHIND, BEHIND_RIGHT, RIGHT, STRAIGHT_RIGHT]

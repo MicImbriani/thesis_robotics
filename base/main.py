@@ -25,12 +25,12 @@ if args.headless:
 
 # Q-LEARNING 
 Q_LEARN = True
-training_speed = 10
+training_speed = 1
 sim_duration = sim_duration
 
 # Parameters
 exploration_rho = 0.2
-lr_alpha = 0.2
+lr_alpha = 0.8
 discount_rate_gamma = 0.9
 walk_len_nu = 0.2
 train_iterations = 1000
@@ -156,7 +156,8 @@ if __name__ == "__main__" and PROGRESS == 2:
             if i != 0:
                 my_sim.set_Q_tables(previous_Q_table)
             # Start
-            my_sim.run()
+            random_start = True if i <= train_iterations/100 else False
+            my_sim.run(random_start)
             # Store
             formation_disr, traj_disr = my_sim.compute_world_score(
                                                         formation_discount,
@@ -168,7 +169,6 @@ if __name__ == "__main__" and PROGRESS == 2:
             dists_avgs = store_distances_logs(my_sim.formation.dists,
                                          my_sim.swarm.robots)
 
-            time.sleep(5)
             # Reset
             del my_sim
             return formation_disr, traj_disr, tables, rewards, dists_avgs

@@ -1,9 +1,12 @@
 from copy import deepcopy
 from utils.utils import distance
 from utils.qlearn_utils import in_correct_direction, get_spacing_from_dist, get_relative_pos_from_coords
+from utils.utils import get_direction_from_heading_4_dirs
+
 
 class State:
     def __init__(self, robot, other_robots):
+        self.current_state = []
         self.robot = robot
         self.other_robots = other_robots
 
@@ -37,7 +40,8 @@ class State:
         """
         return self.distances[self.robot.id]
 
-
     @property
     def _towards_goal(self):
-        return in_correct_direction(self.robot.path, self.robot.end_mid_point)
+        # if self.robot.id == 0:
+            # print(get_direction_from_heading_4_dirs(self.robot.heading))
+        return in_correct_direction(self.robot.position, self.robot.heading, self.robot.end_mid_point)
