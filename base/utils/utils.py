@@ -85,8 +85,7 @@ def get_direction_from_heading(heading) -> dict:
     
 
 def get_direction_from_heading_4_dirs(heading) -> dict:
-    if ((heading == 0)      # RIGHT
-        or (0 < heading <= 0.785) \
+    if ((0 <= heading <= 0.785) \
         or (5.495 < heading) \
         or (heading <= -5.495) \
             or (-0.785 < heading <= 0)):
@@ -95,7 +94,7 @@ def get_direction_from_heading_4_dirs(heading) -> dict:
             or (-5.495 < heading <= -3.925):
         return UP
     elif (2.355 < heading <= 3.925)\
-            or (-3.5342917352885173 < heading <= -2.7488935718910694):
+            or (-3.925 < heading <= -2.355):
         return LEFT
     elif (3.925 < heading <= 5.495)\
             or (-2.355 < heading <= -0.785):
