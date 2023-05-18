@@ -42,6 +42,4 @@ class State:
 
     @property
     def _towards_goal(self):
-        # if self.robot.id == 0:
-            # print(get_direction_from_heading_4_dirs(self.robot.heading))
         return in_correct_direction(self.robot.position, self.robot.heading, self.robot.end_mid_point)

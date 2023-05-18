@@ -66,6 +66,7 @@ class LearnRobot(Robot):
     ################ STATE ################
 
     def get_new_state(self, current_distances):
+        print(self.heading)
         return self.state.get_current_state(current_distances)
 
 
@@ -99,22 +100,18 @@ class LearnRobot(Robot):
         # LOCAL_DIRECTIONS = [STRAIGHT, STRAIGHT_LEFT, LEFT, BEHIND_LEFT, BEHIND, BEHIND_RIGHT, RIGHT, STRAIGHT_RIGHT]
         my_dir = get_direction_from_heading(self.heading)
         dir_id = GLOBAL_DIRECTIONS.index(my_dir)
-        legal_actions = [DECELERATE]
+        legal_actions = [STRAIGHT]
         for idx, action in enumerate(GLOBAL_DIRECTIONS):
             if not new_collisions[idx - dir_id]:
                 legal_actions.append(action)
         # Accelerate and decellerate are always legal
-        return legal_actions + [ACCELERATE] if STRAIGHT in legal_actions \
-            else legal_actions
+        return legal_actions
 
 
     # Given list of possible actions and the current state, returns the best action
     def get_action(self, state, possible_actions):
         state = state if state is not None else self.state.current_state
         action = self.get_best_action(state, possible_actions)
-        # Update attributes.
-        self.last_state.append(state)
-        self.last_action.append(action)
         return action
 
 
@@ -122,7 +119,10 @@ class LearnRobot(Robot):
     def get_best_action(self, state, possible_actions):
         tmp = Counter()
         for action in possible_actions:
+            if self.id == 1:
+                print(f"ACTION: {action},    VALUE: {self.get_Q_value(state, action)}")
             tmp[action] = self.get_Q_value(state, action)
+        print(f"ARGMAX {tmp.argMax()}")
         return tmp.argMax()
 
 
@@ -170,7 +170,11 @@ class LearnRobot(Robot):
     def get_max_Q(self, state, possible_actions):
         q_list = []
         for action in possible_actions:
+            if action == 1 or action == -1:
+                continue
             q_list.append(self.get_Q_value(state, action))
+            # if self.id == 1:
+            #     print(f"ACTION: {action},    VALUE: {self.get_Q_value(state, action)}")
         return 0 if not q_list else max(q_list)
 
 
@@ -182,7 +186,7 @@ class LearnRobot(Robot):
     
     def compute_reward(self, current_distances, dist_to_endpoint):
         # Distance to end goal. Closer -> more points
-        reward = 1/ dist_to_endpoint * 1000
+        reward = 1/ dist_to_endpoint * 10000
         # Reward if robots stay in range of each other,
         # penalize if too far or too close
         spacings = list(get_spacing_from_dist(current_distances).values())
@@ -190,7 +194,7 @@ class LearnRobot(Robot):
             if robot_spacing == TOO_FAR:
                 reward -= 10
             elif robot_spacing == TOO_CLOSE:
-                reward -= 1
+                reward -= 10
             elif robot_spacing == IN_RANGE:
                 reward += 100
             else:

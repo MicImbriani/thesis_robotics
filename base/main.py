@@ -32,8 +32,9 @@ sim_duration = sim_duration
 exploration_rho = 0.2
 lr_alpha = 0.8
 discount_rate_gamma = 0.9
-walk_len_nu = 0.2
 train_iterations = 1000
+RANDOM_START = False
+STRAIGHT_START = False
 
 # MULTI-VERSE
 learning_worlds = 1
@@ -63,7 +64,7 @@ if __name__ == "__main__" and PROGRESS == 0:
                 print(f"Iterations {i}")
                 # Setup
                 my_sim = QLearn(lr_alpha, discount_rate_gamma,
-                                exploration_rho, walk_len_nu, training_speed)
+                                exploration_rho, training_speed)
                 if i != 0:
                     my_sim.set_Q_tables(last_q_tables)
 
@@ -90,7 +91,7 @@ if __name__ == "__main__" and PROGRESS == 0:
             print(f"Iterations {i}")
             # Setup
             my_sim = QLearn(lr_alpha, discount_rate_gamma,
-                            exploration_rho, walk_len_nu, training_speed)
+                            exploration_rho, training_speed)
             if i != 0:
                 my_sim.set_Q_tables(last_q_tables)
 
@@ -117,7 +118,7 @@ if __name__ == "__main__" and PROGRESS==1:
             global i
             # Setup
             my_sim = QLearn(lr_alpha, discount_rate_gamma,
-                            exploration_rho, walk_len_nu, training_speed)
+                            exploration_rho, training_speed)
             if i != 0: my_sim.set_Q_tables(previous_Q_table)
             # Start
             my_sim.run()
@@ -149,15 +150,15 @@ if __name__ == "__main__" and PROGRESS == 2:
         my_sim.run()
     else:
         def one_iter_funct(previous_Q_table):
-            global i, last_iter, local_sum_rewards
+            global i, last_iter, local_sum_rewards, RANDOM_START, STRAIGHT_START
             # Setup
             my_sim = QLearn(lr_alpha, discount_rate_gamma,
-                            exploration_rho, walk_len_nu, training_speed)
+                            exploration_rho, training_speed)
             if i != 0:
                 my_sim.set_Q_tables(previous_Q_table)
             # Start
-            random_start = True if i <= train_iterations/100 else False
-            my_sim.run(random_start)
+            random_start = True if i <= train_iterations/100 and RANDOM_START else False
+            my_sim.run(random_start, STRAIGHT_START)
             # Store
             formation_disr, traj_disr = my_sim.compute_world_score(
                                                         formation_discount,
@@ -177,7 +178,7 @@ if __name__ == "__main__" and PROGRESS == 2:
         tot_avg_rewards = []
         tot_min_rewards = []
         tot_max_rewards = []
-        all_dists_logs = {(0,1):[], (0,2):[], (1,3):[]}
+        all_dists_logs = {(0,1):[], (0,2):[], (1,2):[]}
         # Variables needed for executing the various learning worlds
         previous_Q_tables = [[] for _ in range(learning_worlds)]
         iter_counter = 0
@@ -207,7 +208,11 @@ if __name__ == "__main__" and PROGRESS == 2:
             # Store info of distances log
             dists_list = [world[-1] for world in world_scores][0] \
                 if learning_worlds == 1 else [world[-1] for world in world_scores]
-            [all_dists_logs[pair].append(pair_dist) for pair, pair_dist in zip(all_dists_logs, dists_list)]
+            
+            if learning_worlds == 1:
+                [all_dists_logs[pair].append(pair_dist) for pair, pair_dist in zip(all_dists_logs, dists_list)]
+            else: 
+                [all_dists_logs[pair].append(pair_dist[0]) for pair, pair_dist in zip(all_dists_logs, dists_list)]
 
             # Compute best performing world
             all_world_scores = []
@@ -236,12 +241,12 @@ if __name__ == "__main__" and PROGRESS == 2:
 
             # Save results
             if i % 10 == 0:
-                save_element(previous_Q_tables, 'trained_controller')
-                save_element(tot_avg_rewards, 'tot_avg_rewards')
-                save_element(tot_min_rewards, 'tot_min_rewards')
-                save_element(tot_max_rewards, 'tot_max_rewards')
-                save_element(all_dists_logs, 'all_dists_logs')
-                save_element(info_exch_counter, 'info_exch_counter')
+                save_element(previous_Q_tables, './TRAINED_FILES/trained_controller')
+                save_element(tot_avg_rewards, './TRAINED_FILES/tot_avg_rewards')
+                save_element(tot_min_rewards, './TRAINED_FILES/tot_min_rewards')
+                save_element(tot_max_rewards, './TRAINED_FILES/tot_max_rewards')
+                save_element(all_dists_logs, './TRAINED_FILES/all_dists_logs')
+                save_element(info_exch_counter, './TRAINED_FILES/info_exch_counter')
 
             # ON END
             with open("test_output.txt", "a") as myfile:
@@ -254,7 +259,7 @@ if __name__ == "__main__" and PROGRESS == 2:
 
 
 if __name__ == "__main__" and PROGRESS == -1:
-    fr = open('trained_controller', 'rb')
+    fr = open('./TRAINED_FILES/trained_controller', 'rb')
     q_tables = pickle.load(fr)
     ALL = False
     if not ALL:
@@ -263,8 +268,8 @@ if __name__ == "__main__" and PROGRESS == -1:
     for world_q_tables in q_tables:
         # Setup
         my_sim = QLearn(alpha=0, gamma=discount_rate_gamma,
-                        rho=0, nu=walk_len_nu, training_speed=1)
+                        rho=0, training_speed=1)
         # Load Q-tables
         my_sim.set_Q_tables(world_q_tables)
         # Start
-        my_sim.run()
+        my_sim.run(False)

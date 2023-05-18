@@ -19,12 +19,16 @@ def load_policy(sim, file):
     fr.close()
     return sim.get_Q_tables()
 
-def make_plots(swarm, formation):
-    distances = formation.dists
-    distances_log = get_distances_log(swarm)
-    r01 = distances_log[0][1]
-    r02 = distances_log[0][2]
-    r12 = distances_log[1][2]
+
+
+from utils.simulation_utils import get_distances_log
+def make_plots(distances_log):
+    distances = {(0, 1): 50.0,
+                 (0, 2): 50.0,
+                 (1, 2): 50.0}
+    r01 = distances_log[(0,1)]
+    r02 = distances_log[(0,2)]
+    r12 = distances_log[(1,3)]
     length = len(r01)
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)

@@ -18,7 +18,7 @@ from robots.learn_robot import LearnRobot
 
 
 class QLearn(Simulation):
-    def __init__(self, alpha, gamma, rho, nu, training_speed):
+    def __init__(self, alpha, gamma, rho, training_speed):
         self.setup_swarm()
         self.setup_simulation()
         # Training
@@ -29,7 +29,6 @@ class QLearn(Simulation):
         self.alpha = alpha
         self.gamma = gamma
         self.exploration_rho = rho
-        self.nu = nu
         self.total_rewards = 0
         self.random_start = True
 
@@ -57,35 +56,29 @@ class QLearn(Simulation):
         current_distances = self.formation.get_distances()
         dists_to_endpoint = self.formation.dist_to_end_poit()
 
-        # rand_nu = uniform(0, 1)
-        # # TODO: maybe make method for generating random state?
-        # if rand_nu < self.nu or state is None:
-        #     state = problem.getRandomState()
-
         for robot in self.swarm.robots:
-            state = robot.last_state
-            if state is None or state == []:
-                state = robot.state.get_current_state(current_distances[robot.id])
+            state = robot.last_state[-1] if robot.last_state \
+                else robot.state.get_current_state(current_distances[robot.id])
             # Get all possible actions
             possible_actions = robot.get_legal_actions()
             # (Explore vs Exploit)
-            rand_rho = uniform(0, 1)
-            if self.random_start:
-                action = choice(possible_actions)
-            elif simcounter <= sim_iterations/6:
-                action =  STRAIGHT
-            elif rand_rho < self.exploration_rho:
+            if uniform(0, 1) < self.exploration_rho:
                 action = choice(possible_actions)
             else:
                 action = robot.get_action(state, possible_actions)
-            # if robot.id == 0:
-            #     print(action)
+            # RANDOM START
+            if self.random_start:
+                action = choice(possible_actions)
+            # STRAIGHT START
+            if simcounter <= sim_iterations/6:
+                action =  STRAIGHT
 
-            # Take action and get reward and next state
+            # Take action and get reward
             robot.take_next_action(action)
             reward = robot.compute_reward(current_distances[robot.id], dists_to_endpoint[robot.id])
             self.total_rewards += reward
 
+            # Get new state
             new_state = robot.get_new_state(current_distances[robot.id])
 
             # Update Q-table
@@ -94,9 +87,11 @@ class QLearn(Simulation):
             new_Q = Q + self.alpha * (reward + self.gamma * maxQ - Q)
             robot.update_Q(state, action, new_Q)
 
-            # Set state for next iteration
-            robot.last_state = new_state
+            # Set state for next iteration, and store last action
+            robot.last_state.append(new_state)
+            robot.last_action.append(action)
             # print(robot.q_table)
+
 
     def update(self, tick):
         sim_counter = 0
