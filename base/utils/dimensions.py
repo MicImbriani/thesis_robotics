@@ -10,7 +10,7 @@ robot_width = 0.01
 n_rays = 9
 sensor_dist = 100
 sensor_range = (sensor_dist, math.radians(180))
-collision_distance = 15
+collision_distance = 20
 
 
 #FORMATION
