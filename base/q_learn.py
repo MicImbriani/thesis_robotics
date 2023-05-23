@@ -18,7 +18,7 @@ from robots.learn_robot import LearnRobot
 
 
 class QLearn(Simulation):
-    def __init__(self, alpha, gamma, rho, training_speed):
+    def __init__(self, alpha, gamma, rho, training_speed, demo):
         self.setup_swarm()
         self.setup_simulation()
         # Training
@@ -29,6 +29,7 @@ class QLearn(Simulation):
         self.alpha = alpha
         self.gamma = gamma
         self.exploration_rho = rho
+        self.demo = demo
         self.total_rewards = 0
         self.random_start = True
 
@@ -65,13 +66,14 @@ class QLearn(Simulation):
             if uniform(0, 1) < self.exploration_rho:
                 action = choice(possible_actions)
             else:
-                action = robot.get_action(state, possible_actions)
-            # RANDOM START
-            if self.random_start:
-                action = choice(possible_actions)
-            # STRAIGHT START
-            if simcounter <= sim_iterations/6:
-                action =  STRAIGHT
+                action = robot.get_best_action(state, possible_actions)
+            if not self.demo:
+                # RANDOM START
+                if self.random_start:
+                    action = choice(possible_actions)
+                # STRAIGHT START
+                if simcounter <= sim_iterations/8 and self.straight_start:
+                    action =  STRAIGHT
 
             # Take action and get reward
             robot.take_next_action(action)
@@ -90,7 +92,6 @@ class QLearn(Simulation):
             # Set state for next iteration, and store last action
             robot.last_state.append(new_state)
             robot.last_action.append(action)
-            # print(robot.q_table)
 
 
     def update(self, tick):
@@ -119,8 +120,9 @@ class QLearn(Simulation):
             # FORMATION DISRUPTION
             self.tot_form_disr += self.swarm.formation_disruption
 
-    def run(self, random_start):
+    def run(self, random_start, straight_start):
         self.random_start = random_start
+        self.straight_start = straight_start
         tick = pygame.time.get_ticks()
 
         for robot in self.swarm.robots:

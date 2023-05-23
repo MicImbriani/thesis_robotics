@@ -27,8 +27,10 @@ class State:
                 self._towards_goal,
                 spacings[r1.id],
                 get_relative_pos_from_coords(my_pos, r1.position),
+                r1.heading,
                 spacings[r2.id],
-                get_relative_pos_from_coords(my_pos, r2.position)]
+                get_relative_pos_from_coords(my_pos, r2.position),
+                r2.heading]
 
 
     def _get_dist_logs(self):

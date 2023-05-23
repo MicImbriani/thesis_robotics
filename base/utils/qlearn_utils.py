@@ -20,6 +20,13 @@ def load_policy(sim, file):
     return sim.get_Q_tables()
 
 
+def load_element(filename):
+    fr = open(filename, 'rb')
+    elem = pickle.load(fr)
+    fr.close()
+    return elem
+
+
 
 from utils.simulation_utils import get_distances_log
 def make_plots(distances_log):

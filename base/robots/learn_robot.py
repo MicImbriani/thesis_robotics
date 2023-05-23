@@ -1,3 +1,4 @@
+from time import sleep
 from random import choice
 from numpy import array, add
 from math import cos, sin, pi
@@ -66,7 +67,6 @@ class LearnRobot(Robot):
     ################ STATE ################
 
     def get_new_state(self, current_distances):
-        print(self.heading)
         return self.state.get_current_state(current_distances)
 
 
@@ -108,21 +108,12 @@ class LearnRobot(Robot):
         return legal_actions
 
 
-    # Given list of possible actions and the current state, returns the best action
-    def get_action(self, state, possible_actions):
-        state = state if state is not None else self.state.current_state
-        action = self.get_best_action(state, possible_actions)
-        return action
-
-
     # Given a state and possible actions, returns the action of the highest Q value
     def get_best_action(self, state, possible_actions):
+        state = state if state is not None else self.state.current_state
         tmp = Counter()
         for action in possible_actions:
-            if self.id == 1:
-                print(f"ACTION: {action},    VALUE: {self.get_Q_value(state, action)}")
             tmp[action] = self.get_Q_value(state, action)
-        print(f"ARGMAX {tmp.argMax()}")
         return tmp.argMax()
 
 
