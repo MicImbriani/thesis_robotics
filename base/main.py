@@ -32,14 +32,15 @@ sim_duration = sim_duration
 
 # Parameters
 exploration_rho = 0.2
-lr_alpha = 0.8
+lr_alpha = 0.7
 discount_rate_gamma = 0.9
 train_iterations = 1000
-RANDOM_START = True
+train_iterations += 1
+RANDOM_START = False
 STRAIGHT_START = True
 
 # MULTI-VERSE
-learning_worlds = 100
+learning_worlds = 3
 formation_discount = 0.9
 trajectory_discount = 0.7
 
@@ -153,7 +154,7 @@ if __name__ == "__main__" and PROGRESS == 2:
         my_sim.run()
     else:
         def one_iter_funct(previous_Q_table):
-            global i, last_iter, local_sum_rewards, RANDOM_START, STRAIGHT_START
+            global i, RANDOM_START, STRAIGHT_START
             # Setup
             my_sim = QLearn(lr_alpha, discount_rate_gamma,
                             exploration_rho, training_speed, demo=False)
@@ -184,30 +185,26 @@ if __name__ == "__main__" and PROGRESS == 2:
             tot_min_rewards = load_element('./TRAINED_FILES/tot_min_rewards')
             tot_max_rewards = load_element('./TRAINED_FILES/tot_max_rewards')
             all_dists_logs = load_element('./TRAINED_FILES/all_dists_logs')
+            previous_Q_tables = load_element("./TRAINED_FILES/trained_controller")
             # Variables needed for executing the various learning worlds
             info_exch = load_element('./TRAINED_FILES/info_exch')
             info_exch_counter = load_element('./TRAINED_FILES/info_exch_counter')
-            previous_Q_tables = load_element("./TRAINED_FILES/trained_controller")
             iter_counter = load_element("./TRAINED_FILES/iter_counter")
-            print("iter_counter", iter_counter)
         else:
             # Variables needed for storing the information
             tot_avg_rewards = []
             tot_min_rewards = []
             tot_max_rewards = []
             all_dists_logs = {(0,1):[], (0,2):[], (1,2):[]}
+            previous_Q_tables = [[] for _ in range(learning_worlds)]
             # Variables needed for executing the various learning worlds
             info_exch = []
             info_exch_counter = 0
-            previous_Q_tables = [[] for _ in range(learning_worlds)]
             iter_counter = 0
-        last_iter = False
 
         # ----------- TRAINING ITERATIONS -----------
         for i in range(train_iterations):
             print(f"Iterations {iter_counter}")
-            if i == train_iterations - 1:
-                last_iter = True
             iter_counter += 1
 
             # Reset local sum of rewards
@@ -281,7 +278,6 @@ if __name__ == "__main__" and PROGRESS == 2:
 
 
 if __name__ == "__main__" and PROGRESS == -1:
-    learning_worlds = 1
     q_tables = load_element("./TRAINED_FILES/trained_controller")
     ALL = True
     if not ALL:

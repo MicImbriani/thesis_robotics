@@ -177,7 +177,7 @@ class LearnRobot(Robot):
     
     def compute_reward(self, current_distances, dist_to_endpoint):
         # Distance to end goal. Closer -> more points
-        reward = 1/ dist_to_endpoint * 10000
+        reward = 1 / dist_to_endpoint * 30000
         # Reward if robots stay in range of each other,
         # penalize if too far or too close
         spacings = list(get_spacing_from_dist(current_distances).values())
