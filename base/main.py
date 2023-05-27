@@ -26,7 +26,7 @@ if args.headless:
 
 
 # Q-LEARNING 
-Q_LEARN = True
+Q_LEARN = False
 training_speed = 10
 sim_duration = sim_duration
 
@@ -278,18 +278,22 @@ if __name__ == "__main__" and PROGRESS == 2:
 
 
 if __name__ == "__main__" and PROGRESS == -1:
-    q_tables = load_element("./TRAINED_FILES/trained_controller")
-    ALL = True
-    if not ALL:
-        q_tables = [choice(q_tables)]
-    for world_q_tables in q_tables:
-        # Setup
-        my_sim = QLearn(alpha=0, gamma=discount_rate_gamma,
-                        rho=0, training_speed=1, demo=True)
-        # Load Q-tables
-        my_sim.set_Q_tables(world_q_tables)
-        # Start
-        my_sim.run(False, False)
-        print("")
-        print("")
-        print("")
+    if not Q_LEARN:
+        my_sim = Simulation()
+        my_sim.run()
+    else:
+        q_tables = load_element("./TRAINED_FILES/trained_controller")
+        ALL = True
+        if not ALL:
+            q_tables = [choice(q_tables)]
+        for world_q_tables in q_tables:
+            # Setup
+            my_sim = QLearn(alpha=0, gamma=discount_rate_gamma,
+                            rho=0, training_speed=1, demo=True)
+            # Load Q-tables
+            my_sim.set_Q_tables(world_q_tables)
+            # Start
+            my_sim.run(False, False)
+            print("")
+            print("")
+            print("")
